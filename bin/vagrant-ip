@@ -1,0 +1,8 @@
+#!/bin/sh
+IFACE=$1
+
+if [ -z "$IFACE" ]; then
+    IFACE="eth1"
+fi
+
+vagrant ssh -c "/sbin/ifconfig $IFACE" | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'

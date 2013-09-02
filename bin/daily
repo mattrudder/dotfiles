@@ -1,0 +1,18 @@
+#!/bin/sh
+# daily: opens a daily notes text file in my home
+# folder, in my case synced to Google Drive.
+
+DAILY_EDITOR=${EDITOR-vi}
+NOW=$(date +"%Y-%m-%d %A")
+NOW_DIR=$(date +"%Y/%m")
+DAILY_FILE=$NOW.md
+DAILY_HOME="$HOME/dailies"
+DAILY_DIR="$DAILY_HOME/$NOW_DIR"
+
+mkdir -p $DAILY_DIR
+
+# TODO/IDEA: Copy daily on new day?
+export DAILY_PATH="$DAILY_DIR/$DAILY_FILE"
+
+echo "Opening daily note file '$DAILY_PATH'..."
+$DAILY_EDITOR "$DAILY_PATH"

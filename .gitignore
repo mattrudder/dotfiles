@@ -1,0 +1,7 @@
+*.DS_Store
+*~
+*.orig
+*.pyc
+*.swp
+vim/.netrwhist
+vim/backups
