@@ -1,7 +1,6 @@
 " My vimrc file, Started from scratch Sept 2, 2013
 " by Matt Rudder - matt@mattrudder.com - http://mattrudder.com
 set nocompatible
-
 filetype off
 
 " === General Config ===
@@ -14,18 +13,17 @@ set autoread                    "Reload files changed outside vim
 
 set hidden
 
-syntax on
-
 let mapleader=","
 
 " === Colors ===
 set t_Co=256
 colorscheme wombat256 " xoria256 is good too :)
+set guifont=Source\ Code\ Pro:h14
 
 " === Vundle ===
-if filereadable(expand("~/.vim/config/vundle.vim"))
-  source ~/.vim/config/vundle.vim
-endif
+source ~/.vim/config/vundle.vim
+
+syntax on
 
 " === Undo ===
 silent !mkdir ~/.vim/backups > /dev/null 2>&1
@@ -41,9 +39,6 @@ set softtabstop=2
 set tabstop=2
 set expandtab
 
-filetype plugin on
-filetype indent on
-
 " Display tabs and trailing spaces visually
 set list listchars=tab:\ \ ,trail:·
 
@@ -54,4 +49,6 @@ set linebreak
 set scrolloff=8
 set sidescrolloff=15
 set sidescroll=1
+
+source ~/.vim/config/bindings.vim
 

@@ -49,4 +49,9 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-# Customize to your needs...
+PATH=/usr/local/bin:$PATH
+
+# Load machine specific changes from a separate file.
+if [ -f ~/.local.zshrc ]; then
+  source ~/.local.zshrc
+fi

@@ -1,3 +1,6 @@
+set nocompatible
+filetype off
+
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
@@ -20,7 +23,15 @@ Bundle 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (ie. when working on your own plugin)
 " Bundle 'file:///Users/gmarik/path/to/plugin'
 " ...
+"
 
+Bundle 'groenewege/vim-less'
+Bundle 'mileszs/ack.vim'
+
+Bundle 'scrooloose/syntastic'
+Bundle 'Valloric/YouCompleteMe'
+
+syntax enable
 filetype plugin indent on     " required!
 "
 " Brief help
