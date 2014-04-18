@@ -1,7 +1,6 @@
 [user]
-    name = Matt Rudder
-    email = matt@mattrudder.com
-[diff]
+	name = Matt Rudder
+	email = matt@mattrudder.com
 [color]
     ui = auto
 [alias]
@@ -43,8 +42,8 @@
     ra = !git r --all
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
-
     sync = "!find . -maxdepth 2 -type d -name .git -execdir git pull \\;"    
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 
 [merge]
     tool = vimdiff
@@ -56,3 +55,16 @@
 	editor = e -n -w
 [push]
 	default = upstream
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+[difftool "sourcetree"]
+	cmd = ksdiff -- \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" \"$REMOTE\"
+	trustExitCode = true
+[pull]
+	rebase = true
