@@ -6,3 +6,8 @@
 vim/.netrwhist
 vim/backups
 vim/bundle
+emacs/local
+emacs/elpa
+emacs/var
+emacs/auto-save-list
+emacs/savefile

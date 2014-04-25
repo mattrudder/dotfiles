@@ -42,3 +42,5 @@ ln -sFi $SCRIPT_PATH/zshrc ~/.zshrc
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
 ln -sFi $SCRIPT_PATH/githelpers ~/.githelpers
 
+# emacs configs
+ln -sFi $SCRIPT_PATH/emacs ~/.emacs.d
