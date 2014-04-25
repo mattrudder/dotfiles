@@ -2,6 +2,8 @@
 ;; by Matt Rudder (matt@mattrudder.com)
 
 (load-theme 'wombat t)
+(add-to-list 'default-frame-alist '(font . "Source Code Pro-13"))
+(set-face-attribute 'default t :font "Source Code Pro-13")
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
