@@ -17,6 +17,8 @@
   "This directory is for your personal configuration, local to this machine.")
 (defvar config-savefile-dir (expand-file-name "savefile" config-dir)
   "This folder stores all the automatically generated save/history-files.")
+(defvar config-vendor-dir (expand-file-name "vendor" config-dir)
+  "This folder stores all packages not retrieved from package.el.")
 
 (defun my:add-subfolders-to-load-path (parent-dir)
  "Add all level PARENT-DIR subdirs to the `load-path'."
@@ -36,6 +38,8 @@
 
 (my:add-subfolders-to-load-path config-core-dir)
 (my:add-subfolders-to-load-path config-local-dir)
+(message "Loading vendor path %s..." config-vendor-dir)
+(add-to-list 'load-path config-vendor-dir)
 
 (setq gc-cons-threshold 50000000)
 

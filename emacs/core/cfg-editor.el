@@ -90,4 +90,32 @@
 (require 'ansi-color)
 (add-hook 'compilation-filter-hook #'config-colorize-compilation-buffer)
 
+;; Set path for libclang, and load irony-mode path
+(setenv "LD_LIBRARY_PATH" "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/")
+(add-to-list 'load-path 
+             (expand-file-name "vendor/irony-mode/elisp" config-dir))
+
+(require 'auto-complete)
+(require 'yasnippet)
+(require 'irony)
+
+(irony-enable 'ac)
+
+(defun my:c++-hooks ()
+  "Enable the hooks in the preferred order: 'yas -> auto-complete -> irony'."
+  ;; be cautious, if yas is not enabled before (auto-complete-mode 1), overlays
+  ;; *may* persist after an expansion.
+  (yas/minor-mode-on)
+  (auto-complete-mode 1)
+  
+  ;; avoid enabling irony-mode in modes that inherits c-mode, e.g: php-mode
+  (when (member major-mode irony-known-modes)
+    (irony-mode 1)))
+
+(add-hook 'c++-mode-hook 'my:c++-hooks)
+(add-hook 'c-mode-hook 'my:c++-hooks)
+
+(require 'gyp-mode)
+
 (provide 'cfg-editor)
+

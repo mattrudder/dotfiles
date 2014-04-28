@@ -3,6 +3,7 @@
 *.orig
 *.pyc
 *.swp
+*.eld
 vim/.netrwhist
 vim/backups
 vim/bundle
