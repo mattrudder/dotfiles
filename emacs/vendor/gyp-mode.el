@@ -28,6 +28,8 @@
 ;;; Code:
 ;;
 
+(when (not (require 'python-mode nil t))
+  (require 'python))
 
 (define-derived-mode gyp-mode python-mode "GYP"
   "Major mode for editing Generate Your Project files."
