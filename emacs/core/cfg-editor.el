@@ -117,5 +117,8 @@
 
 (require 'gyp-mode)
 
+(require 'helm-config)
+
+
 (provide 'cfg-editor)
 

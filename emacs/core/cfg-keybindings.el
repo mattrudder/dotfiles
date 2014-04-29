@@ -61,4 +61,9 @@
 (global-set-key (kbd "C-c J") 'ace-jump-buffer)
 (global-set-key (kbd "s->") 'ace-jump-buffer)
 
+; Helm
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-t") 'helm-find-files)
+(global-set-key (kbd "M-?") 'helm-dash-at-point)
+
 (provide 'cfg-keybindings)
