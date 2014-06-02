@@ -58,3 +58,10 @@ fi
 
 PATH=$PATH:$HOME/dotfiles/bin # dotfiles stuff
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+PATH=$PATH:/usr/local/opt/go/libexec/bin
+
+export PATH
+
+export GOROOT=/usr/local/opt/go/libexec
+export GOPATH=$HOME/Code/Go
+export PATH=$PATH:$GOPATH/bin
