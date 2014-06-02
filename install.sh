@@ -31,6 +31,9 @@ function link {
   ln -sFi "$src" "$dest"
 }
 
+# make sure the dotfiles path has updated submodules
+git submodule update --init
+
 # vim configs
 ln -sFi $SCRIPT_PATH/vimrc ~/.vimrc
 ln -sFi $SCRIPT_PATH/vim/ ~/.vim
