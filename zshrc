@@ -15,6 +15,7 @@ ZSH_THEME="mtr"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias yt="youtube-dl --max-quality mp4 --add-metadata --output \"%(title)s.mp4\""
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -65,3 +66,5 @@ export PATH
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME/Code/Go
 export PATH=$PATH:$GOPATH/bin
+
+eval "$(direnv hook $0)"
