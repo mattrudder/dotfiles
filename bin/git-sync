@@ -1,0 +1,19 @@
+#!/bin/bash
+# git-sync.sh: Update git repositories in named subdirectories, preserving working copy changes.
+
+for f in $@
+do 
+  pushd $f > /dev/null
+  echo "Updating $f..."
+  git update-index -q --refresh
+  git diff-index --quiet HEAD --
+  hasChanges=$?
+  if [ $hasChanges = 1 ]; then
+    git stash -q
+  fi
+  git pull --rebase
+  if [ $hasChanges = 1 ]; then
+    git stash pop -q
+  fi
+  popd > /dev/null
+done
