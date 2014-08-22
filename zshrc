@@ -57,6 +57,11 @@ if [ -f ~/.local.zshrc ]; then
   source ~/.local.zshrc
 fi
 
+# aspnet-k
+if [ -f /usr/local/bin/kvm.sh ]; then
+  source /usr/local/bin/kvm.sh
+fi
+
 PATH=$PATH:$HOME/dotfiles/bin # dotfiles stuff
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 PATH=$PATH:/usr/local/opt/go/libexec/bin
@@ -66,5 +71,12 @@ export PATH
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME/Code/Go
 export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$HOME/google-cloud-sdk/bin
+
+export LDC_PATH=/usr/local/ldc2
+export PATH=$PATH:$LDC_PATH/bin
+
+export DEVELOPER_DIR=`xcode-select --print-path`
+alias symbolicate="$DEVELOPER_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
 
 eval "$(direnv hook $0)"
