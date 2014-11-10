@@ -1,0 +1,3 @@
+#!/bin/bash
+# xam: Launches a new instance of Xamarin Studio
+open -n -a "Xamarin Studio" --args $@
