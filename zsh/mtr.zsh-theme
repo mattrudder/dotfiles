@@ -3,7 +3,7 @@
 # which was based on wunjo prompt theme and modified for oh-my-zsh
 
 # shows me all files and folders when I change directories
-cd() { builtin cd "$@"; ls }
+#cd() { builtin cd "$@"; ls }
 
 # uses ~ instead of /Users/rudder/
 pwd() { print -D $PWD }

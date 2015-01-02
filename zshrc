@@ -1,10 +1,10 @@
 export TERM=xterm-256color
 
 # Path to your oh-my-zsh configuration.
-ZSH=$HOME/dotfiles/oh-my-zsh
+ZSH=$HOME/.oh-my-zsh
 
 # Path to my custom zsh configuration.
-ZSH_CUSTOM=$HOME/dotfiles/zsh
+ZSH_CUSTOM=$HOME/.dotfiles/zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -46,7 +46,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git git-extras git-flow osx brew catimg encode64)
+plugins=(common-aliases git git-extras git-flow osx brew catimg encode64 urltools docker nanoc npm sudo)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -62,21 +62,28 @@ if [ -f /usr/local/bin/kvm.sh ]; then
   source /usr/local/bin/kvm.sh
 fi
 
-PATH=$PATH:$HOME/dotfiles/bin # dotfiles stuff
+# boxen
+if [ -f /opt/boxen/env.sh ]; then
+  source /opt/boxen/env.sh
+fi
+
+PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 PATH=$PATH:/usr/local/opt/go/libexec/bin
 
 export PATH
 
-export GOROOT=/usr/local/opt/go/libexec
-export GOPATH=$HOME/Code/Go
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$HOME/google-cloud-sdk/bin
+#export GOROOT=/usr/local/opt/go/libexec
+#export GOPATH=$HOME/Code/Go
+#export PATH=$PATH:$GOPATH/bin
+#export PATH=$PATH:$HOME/google-cloud-sdk/bin
 
 export LDC_PATH=/usr/local/ldc2
 export PATH=$PATH:$LDC_PATH/bin
 
-export DEVELOPER_DIR=`xcode-select --print-path`
-alias symbolicate="$DEVELOPER_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
+export XCODE_DIR=`xcode-select --print-path`
+alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
 
-eval "$(direnv hook $0)"
+#eval "$(direnv hook $0)"
+
+launchctl setenv PATH $PATH
