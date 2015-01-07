@@ -16,6 +16,8 @@ ZSH_THEME="mtr"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias yt="youtube-dl --max-quality mp4 --add-metadata --output \"%(title)s.mp4\""
+alias s="screen -U"
+alias sr="screen -dr"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -46,7 +48,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(common-aliases git git-extras git-flow osx brew catimg encode64 urltools docker nanoc npm sudo)
+plugins=(common-aliases git git-extras git-flow osx brew catimg encode64 urltools docker nanoc npm sudo screen)
 
 source $ZSH/oh-my-zsh.sh
 
