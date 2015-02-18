@@ -12,6 +12,12 @@ ZSH_CUSTOM=$HOME/.dotfiles/zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="mtr"
 
+# Super cool file renaming! http://www.mfasold.net/blog/2008/11/moving-or-renaming-multiple-files/
+# Ex: mmv Foo-*.jpg Bar-*.jpg
+# Ex: zmv '(*).lis' '$1.txt'
+autoload -U zmv
+alias mmv='noglob zmv -W'
+
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
