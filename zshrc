@@ -24,6 +24,7 @@ alias mmv='noglob zmv -W'
 alias yt="youtube-dl --max-quality mp4 --add-metadata --output \"%(title)s.mp4\""
 alias s="screen -U"
 alias sr="screen -dr"
+alias fsi="fsharpi"
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
