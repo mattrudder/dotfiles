@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Outputs all source files in a comma-separated list,
+# for updating package.json files in clib.
+ack -g "\.(h|c|inl|cpp|mm|m)$" |
+ awk '{ if($1 != "") { if(NR==1) { printf "\"" $1 "\"" } else { printf ",\n\"" $1 "\"" } } }'

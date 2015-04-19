@@ -77,22 +77,8 @@ if [ -f /opt/boxen/env.sh ]; then
 fi
 
 PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-PATH=$PATH:/usr/local/opt/go/libexec/bin
-
-export PATH
-
-#export GOROOT=/usr/local/opt/go/libexec
-#export GOPATH=$HOME/Code/Go
-#export PATH=$PATH:$GOPATH/bin
-#export PATH=$PATH:$HOME/google-cloud-sdk/bin
-
-export LDC_PATH=/usr/local/ldc2
-export PATH=$PATH:$LDC_PATH/bin
 
 export XCODE_DIR=`xcode-select --print-path`
 alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
-
-#eval "$(direnv hook $0)"
 
 launchctl setenv PATH $PATH
