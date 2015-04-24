@@ -21,12 +21,12 @@ my_git_info() {
   
   # Colorize the times
     # green = < 10min
-    # yellow = < 30min
-    # red = > 30min
+    # yellow = < 60min
+    # red = > 60min
     # Used 'spectrum_ls' command to get new colors.
-  if [ "$minutes_since_last_commit" -gt 30 ]; then
+  if [ "$minutes_since_last_commit" -gt 60 ]; then
     colored_time="%{$FG[009]%}"
-  elif [ "$minutes_since_last_commit" -gt 10 ]; then
+  elif [ "$minutes_since_last_commit" -gt 30 ]; then
     colored_time="%{$FG[011]%}"
   else
     colored_time="%{$FG[010]%}"
