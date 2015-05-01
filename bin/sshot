@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# the path where screenshots to save
+SS_PATH="$HOME/Desktop/Screengrabs"
+KEEP_RETINA=false
+SS_PREFIX="screenshot-"
+
+while getopts ":ko:p:" opt; do
+  case $opt in
+    k)
+      KEEP_RETINA=true
+      ;;
+    o)
+      SS_PATH="$OPTARG"
+      ;;
+    p)
+      SS_PREFIX="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if ! [ -d $SS_PATH ]; then
+  mkdir -p $SS_PATH
+fi
+
+# a variable of unix timestamp for screenshot file name
+NOW=$(date +%s)
+
+# execute screen capture command, screenshot$NOW.png is the name of file
+screencapture -i -r $SS_PATH/screenshot$NOW@2X.png
+
+# then downscale the high resolution screenshot to 50% by imagemagick
+# /usr/local/bin/convert $SS_PATH/screenshot$NOW@2X.png -resize 50% $SS_PATH/screenshot$NOW@1X.png
+
+# check if screenshot is existing
+if [ -f $SS_PATH/screenshot$NOW@2X.png ]; then
+    # get the 50% width of screenshot by sips
+    WIDTH=$(($(sips -g pixelWidth $SS_PATH/$SS_PREFIX$NOW@2X.png | cut -s -d ':' -f 2 | cut -c 2-)/2))
+    # scale down by sips
+    sips --resampleWidth $WIDTH $SS_PATH/$SS_PREFIX$NOW@2X.png --out $SS_PATH/screenshot$NOW@1X.png
+    # rm orginal pic file
+    rm $SS_PATH/screenshot$NOW@2X.png
+    # copy small one to clipboard by applescript
+    osascript -e 'set the clipboard to POSIX file "'$SS_PATH/screenshot$NOW@1X.png'"'
+fi

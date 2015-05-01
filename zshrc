@@ -61,11 +61,6 @@ source $ZSH/oh-my-zsh.sh
 
 PATH=/usr/local/bin:$PATH
 
-# Load machine specific changes from a separate file.
-if [ -f ~/.local.zshrc ]; then
-  source ~/.local.zshrc
-fi
-
 # aspnet-k
 if [ -f /usr/local/bin/kvm.sh ]; then
   source /usr/local/bin/kvm.sh
@@ -76,8 +71,14 @@ if [ -f /opt/boxen/env.sh ]; then
   source /opt/boxen/env.sh
 fi
 
-PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
+# Load machine specific changes from a separate file.
+if [ -f ~/.local.zshrc ]; then
+  source ~/.local.zshrc
+fi
 
+export CXXFLAGS=-ferror-limit=5
+
+PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
 export XCODE_DIR=`xcode-select --print-path`
 alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
 

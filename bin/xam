@@ -1,3 +1,21 @@
 #!/bin/bash
 # xam: Launches a new instance of Xamarin Studio
-open -n -a "Xamarin Studio" --args $@
+
+ARGS=$@
+OPEN_ARGS="-n -a"
+
+# Ease of use functionality for creating and opening a single script file
+if [ "$#" -eq 1 ]; then
+  ARGS=`perl -MCwd -e 'print Cwd::realpath ($ARGV[0]), qq<\n>' $1`
+
+  if ! [ -e $ARGS ]; then
+    case $ARGS in
+      *.fsx) touch "$ARGS"; OPEN_ARGS="-a";;
+      *.fsi) touch "$ARGS"; OPEN_ARGS="-a";;
+      *.csx) touch "$ARGS"; OPEN_ARGS="-a";;
+      *) break;;
+    esac
+  fi
+fi
+
+open $OPEN_ARGS "Xamarin Studio" --args $ARGS
