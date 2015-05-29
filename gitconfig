@@ -16,6 +16,7 @@ st = status --short
 sum = summary
 ci = commit
 co = checkout
+cd = !source ~/.githelpers && commit_amend_date
 di = diff
 dc = diff --cached
 amend = commant --amend

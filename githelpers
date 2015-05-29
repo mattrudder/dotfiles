@@ -38,3 +38,8 @@ pretty_git_log() {
         less -FXRS
 }
 
+commit_amend_date() {
+    export GIT_AUTHOR_DATE=`git log -1 --format=%ad`
+    export GIT_COMMITTER_DATE=`git log -1 --format=%ad`
+    git commit --amend
+}
