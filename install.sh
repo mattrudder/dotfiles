@@ -46,7 +46,7 @@ ln -sFi $SCRIPT_PATH/vim/ ~/.vim
 ln -sFi $SCRIPT_PATH/zshrc ~/.zshrc
 
 # .configs
-ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/fish
+ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/
 
 # Git configs
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
