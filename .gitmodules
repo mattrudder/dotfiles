@@ -7,3 +7,6 @@
 [submodule "emacs/vendor/irony-mode"]
 	path = emacs/vendor/irony-mode
 	url = https://github.com/Sarcasm/irony-mode.git
+[submodule "oh-my-fish"]
+	path = oh-my-fish
+	url = git://github.com/oh-my-fish/oh-my-fish.git
