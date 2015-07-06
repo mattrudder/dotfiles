@@ -1,28 +1,32 @@
-# Path to your oh-my-fish.
-set fish_path $HOME/.dotfiles/oh-my-fish
+prepend_to_path $HOME/bin
 
-# Path to your custom folder (default path is ~/.oh-my-fish/custom)
-set fish_custom $HOME/.dotfiles/config/fish/custom
+set -g fish_greeting
 
-# Load oh-my-fish configuration.
-. $fish_path/oh-my-fish.fish
+#
+# Directories
+#
+set -gx DOCS "$HOME/Documents"
+set -gx DROPBOX "$HOME/Dropbox"
+set -gx NOTES "$HOME/Notes"
+set -gx CODE "$HOME/src"
 
-# Custom plugins and themes may be added to ~/.oh-my-fish/custom
-# Plugins and themes can be found at https://github.com/oh-my-fish/
-#Theme 'l'
-#Theme 'integral'
-Theme 'clearance'
-Plugin 'theme'
-Plugin 'balias'
-Plugin 'ta'
-Plugin 'tab'
-Plugin 'ssh'
-Plugin 'pbcopy'
-Plugin 'osx'
-Plugin 'git-flow'
-Plugin 'gi'
-Plugin 'extract'
+append_to_cdpath "."
+append_to_cdpath "$CODE"
 
+set fish_path $HOME/.dotfiles/config/fish
 
-balias gco 'git checkout'
-balias gcd 'git checkout develop'
+#
+# Colors
+#
+set -gx CLICOLOR 1
+set -g fish_color_command     green   --bold
+set -g fish_color_cwd         yellow
+set -g fish_color_end         green
+set -g fish_color_error       red     --bold
+set -g fish_color_escape      purple
+set -g fish_color_param       green
+set -g fish_color_quote       yellow
+set -g fish_color_valid_path  blue    --underline
+
+set -l FISH_BOXEN $fish_path/boxen.fish
+test -r $FISH_BOXEN; and test -d /opt/boxen; and source $FISH_BOXEN
