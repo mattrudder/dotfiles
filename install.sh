@@ -3,13 +3,17 @@
 # Get directory of script.
 pushd . > /dev/null
 SCRIPT_PATH="${BASH_SOURCE[0]}";
-  while([ -h "${SCRIPT_PATH}" ]) do 
+  while([ -h "${SCRIPT_PATH}" ]) do
     cd "`dirname "${SCRIPT_PATH}"`"
-    SCRIPT_PATH="$(readlink "`basename "${SCRIPT_PATH}"`")"; 
+    SCRIPT_PATH="$(readlink "`basename "${SCRIPT_PATH}"`")";
   done
 cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
 SCRIPT_PATH="`pwd`";
 popd > /dev/null
+
+if ! [ -d "$HOME/.config" ]; then
+  mkdir -p "$HOME/.config"
+fi
 
 function link {
   local src=$1
@@ -40,6 +44,9 @@ ln -sFi $SCRIPT_PATH/vim/ ~/.vim
 
 # zsh configs
 ln -sFi $SCRIPT_PATH/zshrc ~/.zshrc
+
+# .configs
+ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/fish
 
 # Git configs
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
