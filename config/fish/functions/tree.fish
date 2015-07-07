@@ -1,3 +1,4 @@
 function tree -d "Default flags for tree"
-	command tree -Ca -I '.svn|.git' --dirsfirst $argv
+	set ignored_files "svn|.git"
+	command tree -Ca -I "$ignored_files" --matchdirs --prune --dirsfirst $argv
 end
