@@ -79,7 +79,25 @@ fi
 export CXXFLAGS=-ferror-limit=5
 
 PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
-export XCODE_DIR=`xcode-select --print-path`
-alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
 
-launchctl setenv PATH $PATH
+if [ "$(uname)" == "Darwin" ]; then
+  # Do something under Mac OS X platform
+  if [ -f $HOME/.dotfiles/zshrc.osx ]; then
+    source $HOME/.dotfiles/zshrc.osx
+  fi
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  # Do something under Linux platform
+  if [ -f $HOME/.dotfiles/zshrc.linux ]; then
+    source $HOME/.dotfiles/zshrc.linux
+  fi
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+  # Do something under Windows NT platform
+  if [ -f $HOME/.dotfiles/zshrc.window ]; then
+    source $HOME/.dotfiles/zshrc.windows
+  fi
+fi
+
+#export XCODE_DIR=`xcode-select --print-path`
+#alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
+
+#launchctl setenv PATH $PATH

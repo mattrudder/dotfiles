@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Get directory of script.
 pushd . > /dev/null

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export XCODE_DIR=`xcode-select --print-path`
+alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceK
+
+launchctl setenv PATH $PATH
