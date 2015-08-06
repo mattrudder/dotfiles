@@ -13,7 +13,7 @@ set -gx CODE "$HOME/src"
 append_to_cdpath "."
 append_to_cdpath "$CODE"
 
-set fish_path $HOME/.dotfiles/config/fish
+set fish_home $HOME/.dotfiles/config/fish
 
 #
 # Colors
@@ -28,5 +28,8 @@ set -g fish_color_param       green
 set -g fish_color_quote       yellow
 set -g fish_color_valid_path  blue    --underline
 
-set -l FISH_BOXEN $fish_path/boxen.fish
+set -l FISH_BOXEN $fish_home/boxen.fish
 test -r $FISH_BOXEN; and test -d /opt/boxen; and source $FISH_BOXEN
+
+. $fish_home/aliases.fish
+

@@ -41,6 +41,10 @@ set -x BOXEN_GITHUB_LOGIN mattrudder
 set -x CFLAGS "-I$HOMEBREW_ROOT/include"
 set -x LDFLAGS "-L$HOMEBREW_ROOT/lib"
 
+# For Rust builds using homebrew libs
+set -x LD_LIBRARY_PATH "$HOMEBREW_ROOT/lib"
+set -x LIBRARY_PATH "$HOMEBREW_ROOT/lib"
+
 # Configure and activate rbenv. You know, for rubies.
 
 set -x RBENV_ROOT $BOXEN_HOME/rbenv
