@@ -2,6 +2,7 @@
 " by Matt Rudder - matt@mattrudder.com - http://mattrudder.com
 set nocompatible
 filetype off
+set shell=bash
 
 " === General Config ===
 set number                      "Line numbers!
@@ -17,7 +18,9 @@ let mapleader=","
 
 " === Colors ===
 set t_Co=256
-colorscheme wombat256 " xoria256 is good too :)
+" colorscheme wombat256 " xoria256 is good too :)
+colorscheme hemisu
+set background=dark
 set guifont=Source\ Code\ Pro:h14
 
 " === Vundle ===
@@ -51,4 +54,5 @@ set sidescrolloff=15
 set sidescroll=1
 
 source ~/.vim/config/bindings.vim
+source ~/.local.vimrc
 
