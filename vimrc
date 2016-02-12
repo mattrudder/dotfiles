@@ -18,10 +18,11 @@ let mapleader=","
 
 " === Colors ===
 set t_Co=256
-" colorscheme wombat256 " xoria256 is good too :)
-colorscheme hemisu
+colorscheme wombat256 " xoria256 is good too :)
+" colorscheme hemisu
 set background=dark
-set guifont=Source\ Code\ Pro:h14
+" set guifont=Source\ Code\ Pro:h14
+set guifont=Fira\ Mono:h15
 
 " === Vundle ===
 source ~/.vim/config/vundle.vim

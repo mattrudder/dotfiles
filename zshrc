@@ -55,8 +55,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(common-aliases git git-extras git-flow osx brew catimg encode64 urltools docker nanoc npm sudo screen)
-
+plugins=(common-aliases cp emoji gem git git-extras git-flow github gitignore osx brew brew-cask catimg encode64 urltools docker nanoc npm sudo screen)
 source $ZSH/oh-my-zsh.sh
 
 PATH=/usr/local/bin:$PATH
@@ -80,17 +79,17 @@ export CXXFLAGS=-ferror-limit=5
 
 PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
 
-if [ "$(uname)" == "Darwin" ]; then
+if [[ "$(uname)" == "Darwin" ]]; then
   # Do something under Mac OS X platform
   if [ -f $HOME/.dotfiles/zshrc.osx ]; then
     source $HOME/.dotfiles/zshrc.osx
   fi
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
   # Do something under Linux platform
   if [ -f $HOME/.dotfiles/zshrc.linux ]; then
     source $HOME/.dotfiles/zshrc.linux
   fi
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+elif [[ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]]; then
   # Do something under Windows NT platform
   if [ -f $HOME/.dotfiles/zshrc.window ]; then
     source $HOME/.dotfiles/zshrc.windows
@@ -101,3 +100,10 @@ fi
 #alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
 
 #launchctl setenv PATH $PATH
+
+export ALTERNATIVE_EDITOR=emacs
+export EDITOR=$HOME/.dotfiles/bin/edit
+
+if [ -f /usr/local/lib/dnx/bin/dnvm.sh ]; then
+  source /usr/local/lib/dnx/bin/dnvm.sh
+fi

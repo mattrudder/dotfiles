@@ -30,11 +30,8 @@ Plugin 'groenewege/vim-less'
 Plugin 'mileszs/ack.vim'
 
 Plugin 'scrooloose/syntastic'
+Plugin 'scrooloose/nerdcommenter'
 Plugin 'Valloric/YouCompleteMe'
-
-Plugin 'phildawes/racer'
-Plugin 'rust-lang/rust.vim'
-Plugin 'timonv/vim-cargo'
 
 call vundle#end()
 
