@@ -13,21 +13,34 @@
   '(
     magit
     popup
+    ; Snippets
     yasnippet
-    irony
-    racer
-    cargo
+    ; Text Completion
     company
-    company-racer
-    company-irony
+    ; Syntax Checking
     flycheck
+    ; Multiple Cursors
+    multiple-cursors
+    mc-extras
+    ; C++
+    irony
+    company-irony
     flycheck-irony
+    ; Rust
+    cargo
+    racer
+    company-racer
     flycheck-rust
     rust-mode
     rustfmt
+    ; .NET
     csharp-mode
     fsharp-mode
     omnisharp
+    ; Elixir
+    elixir-mode
+    alchemist
+    flycheck-dialyzer
     )
   )
 
@@ -47,4 +60,3 @@
     (when (not (package-installed-p p))
       (package-install p))))
 
-  
