@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Make sure nightly is to date, to match the stdlibs we're going to install.
+multirust update nightly
+
+# Make workspace for rust installers
+mkdir -p /tmp/rust-installs
+pushd /tmp/rust-installs
+
+# Install stdlib for all desired iOS platforms -- device and sim.
+ARCHS="aarch64 armv7s i386 x86_64"
+for arch in $ARCHS; do
+    local arch_path="rust-std-nightly-${arch}-apple-ios"
+    curl -O "http://static.rust-lang.org/dist/${arch_path}.tar.gz"
+    tar zxf $arch_path
+    pushd $arch_path
+    ./install.sh --prefix=$(multirust run nightly rustc --print sysroot)
+    popd
+done
+
+# Cleanup workspace
+popd
+rm -rf /tmp/rust-installs
