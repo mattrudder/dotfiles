@@ -41,3 +41,12 @@
 ;; ido setup
 (require 'ido)
 (ido-mode t)
+
+;; custom functions (move to a more permanent place!)
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+
+

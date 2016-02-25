@@ -13,6 +13,8 @@
   '(
     magit
     popup
+    popwin
+    direx
     ; Snippets
     yasnippet
     ; Text Completion
@@ -41,6 +43,8 @@
     elixir-mode
     alchemist
     flycheck-dialyzer
+    ; Graphics Programming
+    glsl-mode
     )
   )
 
