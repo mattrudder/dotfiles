@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Make sure nightly is to date, to match the stdlibs we're going to install.
-multirust update nightly
+# Make sure rust is up to date, to match the stdlibs we're going to install.
+multirust update
 
 # Make workspace for rust installers
 mkdir -p /tmp/rust-installs
@@ -14,21 +14,37 @@ install_rust_stdlib ()
 	return;
     fi
 
-    local arch="$1"
-    local arch_path="rust-std-nightly-${arch}-apple-ios"
-    curl -O "http://static.rust-lang.org/dist/${arch_path}.tar.gz"
-    tar zxf "$arch_path.tar.gz"
-    pushd $arch_path
-    ./install.sh --prefix=$(multirust run nightly rustc --print sysroot)
+    if [ -z "$2" ]
+    then
+	return;
+    fi
+
+    local version="$1"
+    local stdlib="$2"
+    local stdlib_path="rust-std-${version}-${stdlib}"
+    curl -O "http://static.rust-lang.org/dist/${stdlib_path}.tar.gz"
+    tar zxf "$stdlib_path.tar.gz"
+    pushd $stdlib_path
+    ./install.sh --prefix=$(multirust run ${version} rustc --print sysroot)
     popd
 }
 
 
 # Install stdlib for all desired iOS platforms -- device and sim.
-ARCHS="aarch64 armv7s i386 x86_64"
-for arch in $ARCHS; do
-    install_rust_stdlib $arch
+for arch in "aarch64 armv7s i386 x86_64"; do
+    install_rust_stdlib "nightly" "$arch-apple-ios"
 done
+
+# Android
+install_rust_stdlib "stable" "arm-linux-androideabi"
+install_rust_stdlib "beta" "arm-linux-androideabi"
+install_rust_stdlib "nightly" "arm-linux-androideabi"
+
+# Raspberry Pi
+install_rust_stdlib "stable" "arm-unknown-linux-gnueabihf"
+install_rust_stdlib "beta" "arm-unknown-linux-gnueabihf"
+install_rust_stdlib "nightly" "arm-unknown-linux-gnueabihf"
+
 
 # Cleanup workspace
 popd
