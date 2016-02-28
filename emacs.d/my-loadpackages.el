@@ -1,4 +1,6 @@
-; my-loadpackages.el
+;;; my-loadpackages.el --- Configuration for packages loaded from MELPA
+
+;;; Code:
 (load "~/.emacs.d/my-packages.el")
 
 (require 'magit)
@@ -32,6 +34,7 @@
 (setq company-tooltip-align-annotations t)
 
 ; Rust
+(require 'rust-mode)
 (require 'racer)
 (setq racer-cmd (expand-file-name "~/src/thirdparty/racer/target/release/racer"))
 (setq racer-rust-src-path (expand-file-name "~/src/thirdparty/rust/src"))
@@ -60,4 +63,8 @@
 (add-to-list 'auto-mode-alist '("\\.vsh\\'" . glsl-mode))
 (add-to-list 'auto-mode-alist '("\\.fsh\\'" . glsl-mode))
 
+
+(custom-set-variables
+ '(rust-rustfmt-bin (expand-file-name "~/.multirust/toolchains/stable/cargo/bin/rustfmt"))
+ )
 

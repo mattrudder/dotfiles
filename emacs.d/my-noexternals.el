@@ -13,7 +13,13 @@
 
 (setq tab-width 2)
 (setq c-basic-offset 2)
-(setq visible-bell 1)
+
+;; Visible Bell
+(setq visible-bell nil)
+(setq ring-bell-function
+      (lambda ()
+	(invert-face 'mode-line)
+	(run-with-timer 0.1 nil 'invert-face 'mode-line)))
 
 (setq indent-tabs-mode nil)
 
