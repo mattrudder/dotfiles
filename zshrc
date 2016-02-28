@@ -77,7 +77,7 @@ fi
 
 export CXXFLAGS=-ferror-limit=5
 
-PATH=$PATH:$HOME/.dotfiles/bin # dotfiles stuff
+PATH=$HOME/.dotfiles/bin:$PATH # dotfiles stuff
 
 if [[ "$(uname)" == "Darwin" ]]; then
   # Do something under Mac OS X platform
