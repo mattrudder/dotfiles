@@ -11,37 +11,37 @@ install_rust_stdlib ()
 {
     if [ -z "$1" ]
     then
-	return;
+      return;
     fi
 
     if [ -z "$2" ]
     then
-	return;
+      return;
     fi
 
     local version="$1"
     local stdlib="$2"
     local stdlib_path="rust-std-${version}-${stdlib}"
+    echo "Downloading ${stdlib_path}..."
     curl -O "http://static.rust-lang.org/dist/${stdlib_path}.tar.gz"
     tar zxf "$stdlib_path.tar.gz"
     pushd $stdlib_path
-    ./install.sh --prefix=$(multirust run ${version} rustc --print sysroot)
+    sudo ./install.sh --prefix=$(multirust run ${version} rustc --print sysroot)
     popd
 }
 
 
 # Install stdlib for all desired iOS platforms -- device and sim.
-for arch in "aarch64 armv7s i386 x86_64"; do
+ARCHS="aarch64 armv7s i386 x86_64"
+for arch in $ARCHS; do
     install_rust_stdlib "nightly" "$arch-apple-ios"
 done
 
 # Android
-install_rust_stdlib "stable" "arm-linux-androideabi"
 install_rust_stdlib "beta" "arm-linux-androideabi"
 install_rust_stdlib "nightly" "arm-linux-androideabi"
 
 # Raspberry Pi
-install_rust_stdlib "stable" "arm-unknown-linux-gnueabihf"
 install_rust_stdlib "beta" "arm-unknown-linux-gnueabihf"
 install_rust_stdlib "nightly" "arm-unknown-linux-gnueabihf"
 
