@@ -18,8 +18,8 @@
 ; Direx
 (require 'direx)
 (setq direx:leaf-icon "  "
-      direx:open-icon "▾ "
-      direx:closed-icon "▸ ")
+      direx:open-icon "▼ "
+      direx:closed-icon "▶ ")
 (push '(direx:direx-mode :position left :width 35 :dedicated t)
       popwin:special-display-config)
 (global-set-key (kbd "C-\\") 'direx-project:jump-to-project-root-other-window)
