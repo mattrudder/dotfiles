@@ -4,7 +4,7 @@
 (load "~/.emacs.d/my-packages.el")
 
 (require 'magit)
-(define-key global-map (kbd "C-c m") 'magit-status)
+(global-set-key (kbd "C-x g") 'magit-status)
 
 (require 'yasnippet)
 (yas-global-mode 1)
