@@ -1,0 +1,1 @@
+function emacs {emacs.exe -nw}

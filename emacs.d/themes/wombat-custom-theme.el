@@ -1,12 +1,16 @@
+;;; wombat-custom-theme.el --- My custom version of Wombat
+;;; Commentary:
+
+;;; Code:
 (deftheme wombat-custom
   "Custom theme based on wombat, with Company overrides")
 
 (custom-theme-set-faces
  'wombat-custom
- '(default ((t (:family "Roboto Mono" :foundry "unknown" :width normal :height 135 :weight light :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#f6f3e8" :background "#242424" :stipple nil :inherit nil))))
+ '(default ((t (:family "Liberation Mono" :foundry "unknown" :width normal :height 100 :weight light :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#f6f3e8" :background "#242424" :stipple nil :inherit nil))))
  '(cursor ((t (:background "#656565"))))
- '(fixed-pitch ((t (:family "Roboto Mono"))))
- '(variable-pitch ((t (:family "Roboto Sans"))))
+ '(fixed-pitch ((t (:family "Liberation Mono"))))
+ '(variable-pitch ((t (:family "Liberation Sans"))))
  '(escape-glyph ((t (:weight medium :foreground "#ddaa6f"))))
  '(minibuffer-prompt ((t (:foreground "#e5786d"))))
  '(highlight ((t (:foreground "#ffffff" :background "#454545"))))
@@ -55,3 +59,5 @@
  '(company-tooltip-common ((t (:inherit nil :foreground "#95e454")))))
 
 (provide-theme 'wombat-custom)
+(provide 'wombat-custom-theme)
+;;; wombat-custom-theme.el ends here

@@ -1,5 +1,8 @@
-; my-packages.el
-(require 'cl)
+;;; my-packages.el --- My package list
+;;; Commentary:
+
+;;; Code:
+;(require 'cl)
 (require 'package)
 
 (add-to-list 'package-archives
@@ -45,6 +48,8 @@
     flycheck-dialyzer
     ; Graphics Programming
     glsl-mode
+    ; Utilities
+    drag-stuff
     )
   )
 
@@ -64,3 +69,5 @@
     (when (not (package-installed-p p))
       (package-install p))))
 
+(provide 'my-packages)
+;;; my-packages.el ends here

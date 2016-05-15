@@ -1,5 +1,5 @@
 ;;; my-loadpackages.el --- Configuration for packages loaded from MELPA
-
+;;; Commentary:
 ;;; Code:
 (load "~/.emacs.d/my-packages.el")
 
@@ -36,10 +36,12 @@
 ; Rust
 (require 'rust-mode)
 (require 'racer)
-(setq racer-cmd (expand-file-name "~/src/thirdparty/racer/target/release/racer"))
+(setq racer-cmd (expand-file-name "~/.cargo/bin/racer"))
 (setq racer-rust-src-path (expand-file-name "~/src/thirdparty/rust/src"))
 (unless (getenv "RUST_SRC_PATH")
   (setenv "RUST_SRC_PATH" (expand-file-name "~/src/thirdparty/rust/src")))
+(unless (getenv "CARGO_HOME")
+  (setenv "CARGO_HOME" (expand-file-name "~/.cargo")))
 
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 (add-hook 'rust-mode-hook #'company-mode)
@@ -63,8 +65,17 @@
 (add-to-list 'auto-mode-alist '("\\.vsh\\'" . glsl-mode))
 (add-to-list 'auto-mode-alist '("\\.fsh\\'" . glsl-mode))
 
+(cond ((eq system-type 'windows-nt)
+       (custom-set-variables
+	'(rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt.exe"))
+	))
+      (t
+       (custom-set-variables
+	'(rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
+	)))
 
-(custom-set-variables
- '(rust-rustfmt-bin (expand-file-name "~/.multirust/toolchains/stable/cargo/bin/rustfmt"))
- )
+; Drag Stuff Mode
+(drag-stuff-mode t)
 
+(provide 'my-loadpackages)
+;;; my-loadpackages.el ends here

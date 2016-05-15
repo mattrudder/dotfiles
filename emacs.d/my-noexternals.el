@@ -1,17 +1,19 @@
-; ~/.emacs.d/my-noexternals.el
+;;; my-noexternals.el --- Settings that don't depend on plugins
 
+;;; Commentary:
 ;; Remove scrollbars, menu bars, and toolbars
 ; when is a special form of "if", with no else clause, it reads:
 ; (when <condition> <code-to-execute-1> <code-to-execute-2> ...)
 
 ;(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+;;; Code:
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 (setq inhibit-startup-message t)
 (setq inhibit-splash-screen t)
 
-(setq tab-width 2)
+(setq tab-width 4)
 (setq c-basic-offset 2)
 
 ;; Visible Bell
@@ -55,5 +57,7 @@
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
+(provide 'my-noexternals)
+;;; my-noexternals.el ends here
 
 
