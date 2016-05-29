@@ -18,6 +18,8 @@
     popup
     popwin
     direx
+    ; Documentation Helpers
+    dash-at-point
     ; Snippets
     yasnippet
     ; Text Completion

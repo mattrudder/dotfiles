@@ -7,7 +7,7 @@
 
 (custom-theme-set-faces
  'wombat-custom
- '(default ((t (:family "Liberation Mono" :foundry "unknown" :width normal :height 100 :weight light :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#f6f3e8" :background "#242424" :stipple nil :inherit nil))))
+ '(default ((t (:family "Liberation Mono" :foundry "unknown" :width normal :height 135 :weight light :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "#f6f3e8" :background "#242424" :stipple nil :inherit nil))))
  '(cursor ((t (:background "#656565"))))
  '(fixed-pitch ((t (:family "Liberation Mono"))))
  '(variable-pitch ((t (:family "Liberation Sans"))))

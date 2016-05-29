@@ -33,6 +33,10 @@
 (setq company-minimum-prefix-length 1)
 (setq company-tooltip-align-annotations t)
 
+; Dash at point
+(require 'dash-at-point)
+(global-set-key "\C-cd" 'dash-at-point)
+
 ; Rust
 (require 'rust-mode)
 (require 'racer)

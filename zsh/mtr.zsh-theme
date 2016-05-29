@@ -20,13 +20,13 @@ my_git_info() {
   minutes_since_last_commit=$((seconds_since_last_commit/60))
   
   # Colorize the times
-    # green = < 10min
-    # yellow = < 60min
-    # red = > 60min
+    # green = < 60min
+    # yellow = > 60min
+    # red = > 180min
     # Used 'spectrum_ls' command to get new colors.
-  if [ "$minutes_since_last_commit" -gt 60 ]; then
+  if [ "$minutes_since_last_commit" -gt 180 ]; then
     colored_time="%{$FG[009]%}"
-  elif [ "$minutes_since_last_commit" -gt 30 ]; then
+  elif [ "$minutes_since_last_commit" -gt 60 ]; then
     colored_time="%{$FG[011]%}"
   else
     colored_time="%{$FG[010]%}"
@@ -43,5 +43,5 @@ my_git_info() {
   echo " ($colored_branch|$colored_time)"
 }
 
-PROMPT='%{$FG[046]%}%m%{$reset_color%}:${PWD/#$HOME/~}$(my_git_info) %{$FG[011]%}$%{$reset_color%} '
+PROMPT='%{$FG[046]%}%m%{$reset_color%}:${PWD/#$HOME/~}$(my_git_info) %(?.%{$FG[011]%}$%{$reset_color%}.%{$FG[009]%}[%?]%{$reset_color%}) '
 

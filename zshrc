@@ -60,14 +60,14 @@ source $ZSH/oh-my-zsh.sh
 
 PATH=/usr/local/bin:$PATH
 
-# aspnet-k
-if [ -f /usr/local/bin/kvm.sh ]; then
-  source /usr/local/bin/kvm.sh
-fi
-
 # boxen
 if [ -f /opt/boxen/env.sh ]; then
   source /opt/boxen/env.sh
+fi
+
+# Rust 
+if [ -f $HOME/.cargo/env ]; then
+  source $HOME/.cargo/env
 fi
 
 # Load machine specific changes from a separate file.
@@ -80,30 +80,18 @@ export CXXFLAGS=-ferror-limit=5
 PATH=$HOME/.dotfiles/bin:$PATH # dotfiles stuff
 
 if [[ "$(uname)" == "Darwin" ]]; then
-  # Do something under Mac OS X platform
   if [ -f $HOME/.dotfiles/zshrc.osx ]; then
     source $HOME/.dotfiles/zshrc.osx
   fi
 elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
-  # Do something under Linux platform
   if [ -f $HOME/.dotfiles/zshrc.linux ]; then
     source $HOME/.dotfiles/zshrc.linux
   fi
 elif [[ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]]; then
-  # Do something under Windows NT platform
-  if [ -f $HOME/.dotfiles/zshrc.window ]; then
+  if [ -f $HOME/.dotfiles/zshrc.windows ]; then
     source $HOME/.dotfiles/zshrc.windows
   fi
 fi
 
-#export XCODE_DIR=`xcode-select --print-path`
-#alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKitBase.framework/Versions/A/Resources/symbolicatecrash -v"
-
-#launchctl setenv PATH $PATH
-
 export ALTERNATIVE_EDITOR=emacs
 export EDITOR=$HOME/.dotfiles/bin/edit
-
-if [ -f /usr/local/lib/dnx/bin/dnvm.sh ]; then
-  source /usr/local/lib/dnx/bin/dnvm.sh
-fi
