@@ -79,7 +79,7 @@
 	)))
 
 ; Drag Stuff Mode
-(drag-stuff-mode t)
+;(drag-stuff-mode t)
 
 (provide 'my-loadpackages)
 ;;; my-loadpackages.el ends here

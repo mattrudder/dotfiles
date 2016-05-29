@@ -2,7 +2,7 @@
 ;;; Commentary:
 
 ;;; Code:
-;(require 'cl)
+(require 'cl)
 (require 'package)
 
 (add-to-list 'package-archives

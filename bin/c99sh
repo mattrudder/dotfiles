@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+# c99sh: A shebang-friendly script for "interpreting" single C99 files
+# from https://github.com/rhysu/c99sh.  Subject to the Simplified BSD License.
+# Implementation deliberately jumps through hoops to reduce process spawning.
+set -eu
+shopt -s extglob
+name=${0##*/}
+
+# Maps requested pkg-config packages to the origin of the request
+declare -A pkg=()
+stderr_pkgs() {
+    for n in ${!pkg[@]}; do
+        echo "info: ${pkg[$n]} requested package $n" 1>&2
+    done
+}
+
+# Process c99sh flags (not arguments to the interpreted script)
+help="\
+Usage: ${name} [OPTION]... [--] PROGRAM [PROGRAMOPTION]...
+ or:   ${name} [OPTION]... [--] -       [PROGRAMOPTION]...
+ or:   ${name} [OPTION]... [--]
+Compile ${name:0:3} PROGRAM, or standard input, and run it supplying [PROGRAMOPTION]...
+
+Options:
+  -h      Display this help message
+  -m      Wrap input in canonical main declaration exposing argc, argv
+  -p PKG  Make PKG headers and libraries available to PROGRAM via pkg-config(1)
+  -r RC   Load compilation settings from RC suppressing normal rcfile search
+  -s      Include all standard headers defined by ISO/IEC 9899:1999
+  -v      Increase verbosity; may be supplied multiple times
+
+An rcfile "${name}rc" controls compilation if present in the same directory as
+PROGRAM, or if present in the current working directory when processing standard
+input.  Otherwise, if it exists, the file ~/.${name}rc controls compilation.
+
+If compilation is successful, the exit status is that of PROGRAM.
+"
+declare -i m=0 s=0 v=0
+while getopts hmp:r:sv flag; do
+  case $flag in
+    h) exec echo -ne "$help"      ;; # Stops processing due to exec
+    m) m=1                        ;; # To be processed later
+    p) pkg[$OPTARG]="flag -$flag" ;; # Additively record requested package
+    r) r=$OPTARG                  ;; # Record requested rcfile, last one wins
+    s) s=1                        ;; # To be processed later
+    v) ((v+=1))                   ;; # Try -v, -vv, etc. to increase verbosity
+    ?) exit;                      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+# Process standard input on absent or '-' filename otherwise snarf $1
+f="<stdin>"; d="."
+if   [ $# -gt 0 ]
+then if   [ "$1" != "-" ]
+     then f="$1"
+          d=$(dirname "$1")
+          exec 0< "$1"
+     fi
+     shift 1
+fi
+
+c=$(mktemp "${TMPDIR-/tmp}/c99sh.XXXXXX") # Mangled source to be compiled
+x=$(mktemp "${TMPDIR-/tmp}/c99sh.XXXXXX") # Compiled binary to be run
+trap 'rm -f "$c" "$x"' EXIT               # Automatic cleanup on exit
+
+# If requested, include all standard C99 headers in either C or C++ fashion
+if [ $s -gt 0 ]
+then echo "#line $LINENO \"$0\"" >> "$c"
+     head=( assert complex ctype errno fenv float inttypes iso646
+            limits locale math setjmp signal stdarg stdbool stddef
+            stdint stdio stdlib string tgmath time wchar wctype )
+     case "${name:0:3}" in
+     c99|C99) for h in ${head[@]}; do echo "#include <${h}.h>" >> "$c"; done ;;
+     cxx|CXX) for h in ${head[@]}; do echo "#include <c${h}>"  >> "$c"; done ;;
+     esac
+fi
+
+# Assists in reporting formatted errors to stderr followed by exiting
+fatal() { status=$1; shift; printf "$@" 1>&2; echo 1>&2; exit $status; }
+
+# Logic for accumulating details from some named rcfile
+declare -a flags=(${CFLAGS-} "-I$d")      # CPPFLAGS, CFLAGS
+declare -a logic=("$c" ${LDFLAGS-})       # Sources, LDFLAGS, LIBS
+process_rcfile() {
+  local i=0
+  while IFS=$' \t\n' read -r o; do
+    echo "#line $((i+=1)) \"$1\" // $o" >> "$c"  # Record line in munged source
+    if   [  -z "$o"        ]                     # Skip empty lines
+    then :
+    elif [[ $o =~ ^#      ]]                     # C preprocessor directives
+    then echo "$o" >> "$c"
+    elif [[ $o =~ ^-[lLR] ]]                     # Linker flags
+    then logic+=($o)
+    elif [[ $o =~ ^-      ]]                     # Compiler flags
+    then flags+=($o)
+    elif [[ $o =~ ^pkg-config[[:space:]]+ ]]     # Declaration for pkg-config..
+    then local p=${o##pkg-config+([[:space:]])}  # ..requires lengthier parsing
+         if   [[ $p =~ ^--cflags ]]
+         then fatal $LINENO "$1:$i error: extraneous '--cflags'\n\t$o\n\t^"
+         elif [[ $p =~ ^--libs   ]]
+         then fatal $LINENO "$1:$i error: extraneous '--libs'\n\t$o\n\t^"
+         elif [[ $p =~ ^[-+/._[:space:][:alnum:]]+$ ]]
+         then for q in $p; do pkg[$q]="$1:$i"; done
+         else fatal $LINENO "$1:$i error: invalid package name(s)\n\t$o\n\t^"
+         fi
+    elif [ -f "$o" ]                             # Linker target
+    then logic+=($o)
+    else fatal $LINENO "$1:$i error: non-existent or unknown option\n\t$o\n\t^"
+    fi
+  done < "$1"
+}
+
+# Process only the first rcfile; permits directory-specific settings
+if   [ -n "${r-}" ]
+then process_rcfile "$r"
+elif [ -f "$d/${name}rc" ]
+then process_rcfile "$d/${name}rc"
+elif [ -f "$HOME/.${name}rc" ]
+then process_rcfile "$HOME/.${name}rc"
+fi
+
+# Combine all package requests to permit invoking pkg-config at most twice
+# Also permits smart merging of results and package conflict detection
+# Causes all pkg-config --libs to appear after linker targets.  Ok?
+if [ ${#pkg[@]} -gt 0 ]
+then flags+=($(pkg-config --cflags ${!pkg[@]})) || (echo 1>&2; stderr_pkgs; \
+        fatal $LINENO "error: failure obtaining --cflags from pkg-config")
+     logic+=($(pkg-config --libs   ${!pkg[@]})) || (echo 1>&2; stderr_pkgs; \
+        fatal $LINENO "error: failure obtaining --libs from pkg-config")
+fi
+
+# If requested, open main function about input suppressing unused argc, argv
+if [ $m -gt 0 ]
+then echo "#line $LINENO \"$0\""               >> "$c"
+     echo "int main(int argc, char *argv[]) {" >> "$c"
+     echo "(void) argc; (void) argv;"          >> "$c"
+fi
+
+# Prepare source from standard input for "interpretation" by the compiler.
+# Possibly swap shebang on first input line with a preprocessor line pragma so
+#   (a) the source can be compiled without an unknown pragma warning, and
+#   (b) errors and warnings within the file show usable line information
+echo "#line 1 \"$f\""            >> "$c"
+sed "1s|^#!.*\$|#line 2 \"$f\"|" >> "$c"
+
+# If requested, close main function about input
+if [ $m -gt 0 ]
+then echo "#line $LINENO \"$0\"" >> "$c"
+     echo "} /*main*/"           >> "$c"
+fi
+
+# Compile and execute with any remaining command line arguments
+[ $v -ge 2 ] && cat "$c" 1>&2
+[ $v -ge 1 ] && set -x
+case "${name:0:3}" in
+  c11|C11)
+    "${CC-cc}"   -std=gnu11   -o "$x" "${flags[@]}" -x c   "${logic[@]}" 1>&2
+    ;;
+  c99|C99)
+    "${CC-cc}"   -std=gnu99   -o "$x" "${flags[@]}" -x c   "${logic[@]}" 1>&2
+    ;;
+  cxx|CXX)
+    "${CXX-c++}" -std=gnu++11 -o "$x" "${flags[@]}" -x c++ "${logic[@]}" 1>&2
+    ;;
+  *)
+    fatal $LINENO "error: unrecognized language prefix - ${name:0:3}"
+    ;;
+esac
+"$x" "$@"
