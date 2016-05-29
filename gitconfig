@@ -2,12 +2,6 @@
 name = Matt Rudder
 email = matt@mattrudder.com
 
-[hub]
-protocol = git
-
-[credential]
-helper = /opt/boxen/bin/boxen-git-credential
-
 [color]
 ui = auto
 
@@ -59,11 +53,20 @@ br = branch
 
 [core]
 pager = less -R
-editor = atom --wait
-excludesfile = /opt/boxen/config/git/gitignore
+editor = subl -n -w
+#excludesfile = /opt/boxen/config/git/gitignore
 
 [push]
 default = upstream
 
 [pull]
 rebase = true
+
+[filter "lfs"]
+  clean = git-lfs clean %f
+  smudge = git-lfs smudge %f
+  required = true
+
+[mergetool "unityyamlmerge"]
+  cmd = /Applications/Unity/Unity.app/Contents/Tools/UnityYAMLMerge merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
+  trustExitCode = false
