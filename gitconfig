@@ -53,7 +53,7 @@ br = branch
 
 [core]
 pager = less -R
-editor = subl -n -w
+editor = code -n -w
 #excludesfile = /opt/boxen/config/git/gitignore
 
 [push]
@@ -66,7 +66,4 @@ rebase = true
   clean = git-lfs clean %f
   smudge = git-lfs smudge %f
   required = true
-
-[mergetool "unityyamlmerge"]
-  cmd = /Applications/Unity/Unity.app/Contents/Tools/UnityYAMLMerge merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
-  trustExitCode = false
+  
