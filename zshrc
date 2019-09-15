@@ -58,13 +58,6 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 plugins=(common-aliases cp emoji gem git git-extras git-flow github gitignore osx brew brew-cask catimg encode64 urltools docker nanoc npm sudo screen)
 source $ZSH/oh-my-zsh.sh
 
-PATH=/usr/local/bin:$PATH
-
-# boxen
-if [ -f /opt/boxen/env.sh ]; then
-  source /opt/boxen/env.sh
-fi
-
 # Rust 
 if [ -f $HOME/.cargo/env ]; then
   source $HOME/.cargo/env

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+PATH=/usr/local/bin:$PATH
+
+# boxen
+if [ -f /opt/boxen/env.sh ]; then
+  source /opt/boxen/env.sh
+fi
+
+
 export XCODE_DIR=`xcode-select --print-path`
 alias symbolicate="$XCODE_DIR/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceK"
 
