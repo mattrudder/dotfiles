@@ -51,6 +51,7 @@ ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/
 # Git configs
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
 ln -sFi $SCRIPT_PATH/githelpers ~/.githelpers
+ln -sFi $SCRIPT_PATH/gitignore ~/.gitignore
 
 # emacs configs
 ln -sFi $SCRIPT_PATH/emacs ~/.emacs.d

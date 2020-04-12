@@ -53,7 +53,8 @@ br = branch
 
 [core]
 pager = less -R
-editor = code -n -w
+editor = subl -n -w
+excludesfile = ~/.gitignore
 #excludesfile = /opt/boxen/config/git/gitignore
 
 [push]
@@ -67,3 +68,5 @@ rebase = true
   smudge = git-lfs smudge %f
   required = true
   
+[winUpdater]
+	recentlySeenVersion = 2.25.0.windows.1
