@@ -15,6 +15,11 @@ if (-not (Get-Command code)) {
     scoop install vscode > $null
 }
 
+foreach ($line in Get-Content $PSScriptRoot\vsix) {
+    Write-Output "👨🏼‍💻 installing vscode extension $line..."
+    code --force --install-extension $line > $null
+}
+
 # Install Starship
 if (-not (Get-Command starship)) {
     Write-Output "🚀 installing starship.rs..."
