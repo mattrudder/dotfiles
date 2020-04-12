@@ -2,6 +2,19 @@
 # TODO: Add force parameter
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+# Install Scoop
+if (-not (Get-Command scoop)) {
+    Write-Output "📦 installing scoop..."
+    Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh') | Out-Null
+} else {
+    Write-Output "📦 scoop already installed!"
+}
+
+if (-not (Get-Command code)) {
+    Write-Output "👨🏼‍💻 installing vscode..."
+    scoop install vscode > $null
+}
+
 # Install Starship
 if (-not (Get-Command starship)) {
     Write-Output "🚀 installing starship.rs..."
