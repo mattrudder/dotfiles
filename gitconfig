@@ -53,7 +53,7 @@ br = branch
 
 [core]
 pager = less -R
-editor = subl -n -w
+editor = code -n -w
 excludesfile = ~/.gitignore
 #excludesfile = /opt/boxen/config/git/gitignore
 
