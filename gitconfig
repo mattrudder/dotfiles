@@ -53,7 +53,7 @@ br = branch
 
 [core]
 pager = less -R
-editor = code -n -w
+editor = code -r -w
 excludesfile = ~/.gitignore
 #excludesfile = /opt/boxen/config/git/gitignore
 
@@ -70,3 +70,5 @@ rebase = true
   
 [winUpdater]
 	recentlySeenVersion = 2.25.0.windows.1
+[credential]
+	helper = manager
