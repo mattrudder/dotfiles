@@ -5,6 +5,7 @@ function make-link ($target, $link) {
 }
 
 make-link $PWD\vimrc $HOME\.vimrc
+make-link $PWD\vimrc $HOME\.nvimrc
 make-link $PWD\vim $HOME\.vim
 
 make-link $PWD\zshrc $HOME\.zshrc

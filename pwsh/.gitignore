@@ -1,1 +1,5 @@
 modules
+Help
+
+# Remove host specific profiles
+Microsoft.PowerShell_profile.ps1
