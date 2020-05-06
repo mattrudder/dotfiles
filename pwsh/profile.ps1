@@ -14,5 +14,8 @@ if (Test-Path $PSScriptRoot\modules\visualstudio.psm1) {
     Import-Module $PSScriptRoot\modules\visualstudio.psm1
 }
 
+function New-Link ($target, $link) {
+    New-Item -Path $link -ItemType SymbolicLink -Value $target -Force | Out-Null
+}
 
 New-Alias which Get-Command

@@ -10,14 +10,31 @@ if (-not (Get-Command scoop)) {
     Write-Output "📦 scoop already installed!"
 }
 
+$scoopapps = scoop export | ForEach-Object {
+  $_.Split()[0]
+}
+
+foreach ($line in Get-Content $PSScriptRoot\scoopdeps) {
+    if (-not ($scoopapps -contains $line)) {
+        Write-Output "📦 installing scoop package $line..."
+        scoop install $line > $null
+    }
+}
+
 if (-not (Get-Command code)) {
     Write-Output "👨🏼‍💻 installing vscode..."
     scoop install vscode > $null
 }
 
+# Get an array of currently installed extensions
+$vs_ext = code --list-extensions
+$vs_ext = $vs_ext -split "`r`n"
+
 foreach ($line in Get-Content $PSScriptRoot\vsix) {
-    Write-Output "👨🏼‍💻 installing vscode extension $line..."
-    code --force --install-extension $line > $null
+    if (-not ($vs_ext -contains $line)) {
+        Write-Output "👨🏼‍💻 installing vscode extension $line..."
+        code --force --install-extension $line > $null
+    }
 }
 
 # Install Starship
