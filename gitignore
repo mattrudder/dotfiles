@@ -1,6 +1,7 @@
 # ~/dotfiles/.gitignore - user global ignores
 
 # text editors and tools
+.idea
 .vscode
 *.sublime-project
 *.sublime-workspace
