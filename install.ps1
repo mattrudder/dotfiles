@@ -8,8 +8,9 @@ make-link $PWD\gitconfig $HOME\.gitconfig
 make-link $PWD\githelpers $HOME\.githelpers
 make-link $PWD\gitignore $HOME\.gitignore
 
-make-link $PWD\config\nvim $Env:LOCALAPPDATA\nvim
-mkdir ~\AppData\Local\nvim-data\site\autoload
+make-link $PWD\nvim $Env:LOCALAPPDATA\nvim
+
+New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
 $uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 (New-Object Net.WebClient).DownloadFile(
   $uri,

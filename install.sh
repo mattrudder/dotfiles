@@ -40,13 +40,10 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # .configs
-ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/
-ln -sFi $SCRIPT_PATH/config/nvim/ ~/.config/
+ln -sFi $SCRIPT_PATH/fish/ ~/.config/
+ln -sFi $SCRIPT_PATH/nvim/ ~/.config/
 
 # Git configs
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
 ln -sFi $SCRIPT_PATH/githelpers ~/.githelpers
 ln -sFi $SCRIPT_PATH/gitignore ~/.gitignore
-
-# emacs configs
-ln -sFi $SCRIPT_PATH/emacs ~/.emacs.d
