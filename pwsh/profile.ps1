@@ -1,4 +1,5 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$Env:TERM="xterm-256colors"
 
 Invoke-Expression (&starship init powershell)
 
