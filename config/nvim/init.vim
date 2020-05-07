@@ -3,7 +3,7 @@ let mapleader = "\<Space>"
 let s:is_win = has('win32') || has('win64')
 if s:is_win
   set shell=cmd.exe
-  set shellslash
+"  set shellslash
 else
   set shell=/bin/bash
 endif

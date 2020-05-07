@@ -35,15 +35,9 @@ function link {
   ln -sFi "$src" "$dest"
 }
 
-# make sure the dotfiles path has updated submodules
-git submodule update --init
-
 # vim configs
-ln -sFi $SCRIPT_PATH/vimrc ~/.vimrc
-ln -sFi $SCRIPT_PATH/vim/ ~/.vim
-
-# zsh configs
-ln -sFi $SCRIPT_PATH/zshrc ~/.zshrc
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # .configs
 ln -sFi $SCRIPT_PATH/config/fish/ ~/.config/
