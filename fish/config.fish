@@ -8,12 +8,12 @@ set -g fish_greeting
 set -gx DOCS "$HOME/Documents"
 set -gx DROPBOX "$HOME/Dropbox"
 set -gx NOTES "$HOME/Notes"
-set -gx CODE "$HOME/src"
+set -gx CODE "$HOME/dev"
 
 append_to_cdpath "."
 append_to_cdpath "$CODE"
 
-set fish_home $HOME/.dotfiles/config/fish
+set fish_home $HOME/.dotfiles/fish
 
 #
 # Colors
@@ -27,9 +27,6 @@ set -g fish_color_escape      purple
 set -g fish_color_param       green
 set -g fish_color_quote       yellow
 set -g fish_color_valid_path  blue    --underline
-
-set -l FISH_BOXEN $fish_home/boxen.fish
-test -r $FISH_BOXEN; and test -d /opt/boxen; and source $FISH_BOXEN
 
 . $fish_home/aliases.fish
 
