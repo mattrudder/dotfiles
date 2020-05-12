@@ -19,19 +19,6 @@ function link {
   local src=$1
   local dest=$2
 
-  #if [ -e "$dest" ] || [ -h "$dest" ]; then
-
-  #  read -p "File $dest already exists. Overwrite? [Y/n] " -n 1 -r
-  #  echo
-
-  #  if [[ $REPLY =~ ^[Nn]$ ]]; then
-  #    return
-  #  fi
-
-  #  rm -f "$dest"
-  #fi
-
-  #echo "ln -s '$src' '$dest'"
   ln -sFi "$src" "$dest"
 }
 
@@ -47,3 +34,7 @@ ln -sFi $SCRIPT_PATH/nvim/ ~/.config/
 ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
 ln -sFi $SCRIPT_PATH/githelpers ~/.githelpers
 ln -sFi $SCRIPT_PATH/gitignore ~/.gitignore
+
+which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh
+which starship >/dev/null || cargo install starship --force --quiet
+which volta >/dev/null || curl https://get.volta.sh | bash

@@ -1,5 +1,7 @@
 prepend_to_path $HOME/bin
 
+source (starship init fish --print-full-init | psub)
+
 set -g fish_greeting
 
 #
@@ -14,6 +16,11 @@ append_to_cdpath "."
 append_to_cdpath "$CODE"
 
 set fish_home $HOME/.dotfiles/fish
+
+
+set -gx KERN_NAME (string lower (uname -s))
+set -gx CARGO_TARGET_DIR target/$KERN_NAME
+prepend_to_path $HOME/.cargo/bin
 
 #
 # Colors
