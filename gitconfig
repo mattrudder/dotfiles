@@ -55,7 +55,7 @@ br = branch
 pager = less -R
 editor = code -r -w
 excludesfile = ~/.gitignore
-#excludesfile = /opt/boxen/config/git/gitignore
+autocrlf = input
 
 [push]
 default = upstream
