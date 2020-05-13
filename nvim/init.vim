@@ -283,10 +283,12 @@ tnoremap <C-c> <Esc>
 vnoremap <C-h> :nohlsearch<cr>
 nnoremap <C-h> :nohlsearch<cr>
 
-" Suspend with Ctrl+f
-inoremap <C-f> :sus<cr>
-vnoremap <C-f> :sus<cr>
-nnoremap <C-f> :sus<cr>
+" Suspend with Ctrl+f (except for windows, 'cause there's no way to get back)
+if !s:is_win
+  inoremap <C-f> :sus<cr>
+  vnoremap <C-f> :sus<cr>
+  nnoremap <C-f> :sus<cr>
+endif
 
 " Jump to start and end of line using the home row keys
 map H ^
