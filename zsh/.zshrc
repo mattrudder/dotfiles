@@ -46,3 +46,9 @@ BASE16_SHELL="$BASE16_DIR/shell"
 [ -n "$PS1" ] && \
     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
         eval "$("$BASE16_SHELL/profile_helper.sh")"
+
+# Load Git completion
+zstyle ':completion:*:*:git:*' script $ZDOTDIR/functions/git-completion.bash
+fpath=($ZDOTDIR/functions $fpath)
+
+autoload -Uz compinit && compinit
