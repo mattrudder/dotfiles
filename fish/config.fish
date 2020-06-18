@@ -11,10 +11,8 @@ set -gx DOCS "$HOME/Documents"
 set -gx DROPBOX "$HOME/Dropbox"
 set -gx NOTES "$HOME/Notes"
 set -gx CODE "$HOME/dev"
-set -gx VOLTA_HOME "$HOME/.volta"
 set -gx STARSHIP_CONFIG "$HOME/.dotfiles/starship.toml"
 
-prepend_to_path $VOLTA_HOME/bin
 
 append_to_cdpath "."
 append_to_cdpath "$CODE"
@@ -41,3 +39,5 @@ set -g fish_color_valid_path  blue    --underline
 
 . $fish_home/aliases.fish
 
+set -gx VOLTA_HOME "$HOME/.volta"
+set -gx PATH "$VOLTA_HOME/bin" $PATH

@@ -12,3 +12,4 @@ emacs/elpa
 emacs/var
 emacs/auto-save-list
 emacs/savefile
+zsh/.zsh_history

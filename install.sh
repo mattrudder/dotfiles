@@ -19,7 +19,7 @@ function link {
   local src=$1
   local dest=$2
 
-  ln -sFi "$src" "$dest"
+  ln -sFhi "$src" "$dest"
 }
 
 # vim configs
@@ -27,14 +27,24 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # .configs
-ln -sFi $SCRIPT_PATH/fish/ ~/.config/
-ln -sFi $SCRIPT_PATH/nvim/ ~/.config/
+ln -sFhi $SCRIPT_PATH/fish/ ~/.config/
+ln -sFhi $SCRIPT_PATH/nvim/ ~/.config/
+
+# zsh configs
+ln -sFhi $SCRIPT_PATH/zsh/.zshenv ~/.zshenv
+ln -sFhi $SCRIPT_PATH/zsh ~/.zsh
+
 
 # Git configs
-ln -sFi $SCRIPT_PATH/gitconfig ~/.gitconfig
-ln -sFi $SCRIPT_PATH/githelpers ~/.githelpers
-ln -sFi $SCRIPT_PATH/gitignore ~/.gitignore
+ln -sFhi $SCRIPT_PATH/gitconfig ~/.gitconfig
+ln -sFhi $SCRIPT_PATH/githelpers ~/.githelpers
+ln -sFhi $SCRIPT_PATH/gitignore ~/.gitignore
 
 which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh
-which starship >/dev/null || cargo install starship --force --quiet
+which starship >/dev/null || cargo install starship --force
 which volta >/dev/null || curl https://get.volta.sh | bash
+
+echo $OSTYPE
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  source $SCRIPT_PATH/macos/install.sh
+fi
