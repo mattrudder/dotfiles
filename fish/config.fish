@@ -19,7 +19,7 @@ append_to_cdpath "$CODE"
 
 set fish_home $HOME/.dotfiles/fish
 
-
+# Rust
 set -gx KERN_NAME (string lower (uname -s))
 set -gx CARGO_TARGET_DIR target/$KERN_NAME
 prepend_to_path $HOME/.cargo/bin
@@ -39,5 +39,6 @@ set -g fish_color_valid_path  blue    --underline
 
 . $fish_home/aliases.fish
 
+starship init fish | source
 set -gx VOLTA_HOME "$HOME/.volta"
 set -gx PATH "$VOLTA_HOME/bin" $PATH

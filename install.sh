@@ -11,6 +11,8 @@ cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
 SCRIPT_PATH="`pwd`";
 popd > /dev/null
 
+export DOTFILES_DIR=$SCRIPT_PATH
+
 if ! [ -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi

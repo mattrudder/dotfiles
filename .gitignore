@@ -1,15 +1,69 @@
-*.DS_Store
-*~
-*.orig
+# Compiled source #
+###################
+# *.com # MTR 1/28/19 -- Disabling user .gitignore 'cause this causes some nasty exclusions when committing vendor files in go.
+*.class
+*.dll
+*.exe
+*.o
+*.so
 *.pyc
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# Visual Studio Code settings #
+###############################
+.vscode
+jsconfig.json
+
+# Vim generated files #
+#######################
+*.orig
 *.swp
 *.eld
 vim/.netrwhist
 vim/backups
 vim/bundle
+
+# Emacs generated files #
+#########################
 emacs/local
 emacs/elpa
 emacs/var
 emacs/auto-save-list
 emacs/savefile
+
+# Zsh generated files #
+#######################
 zsh/.zsh_history
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Direnv Local Settings #
+#########################
+.envrc
+

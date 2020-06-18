@@ -1,6 +1,7 @@
 [user]
 name = Matt Rudder
-email = matt@mattrudder.com
+useConfigOnly = true
+email = rudderm@twitch.tv
 
 [color]
 ui = auto
@@ -13,7 +14,7 @@ co = checkout
 cd = !source ~/.githelpers && commit_amend_date
 di = diff
 dc = diff --cached
-amend = commant --amend
+amend = commit --amend
 aa = add --all
 ff = merge --ff-only
 pullff = pull --ff-only
@@ -23,6 +24,12 @@ pom = push origin master
 b = branch
 ds = diff --stat=160,120
 dh1 = diff HEAD~1
+ls-merged = !git fetch -p && git branch -vv | awk '/: gone]/{print $1}'
+rm-merged = !git ls-merged | xargs git branch -d
+rm-merged-force = !git ls-merged | xargs git branch -D
+ls-untracked = ls-files --others --exclude-standard
+line-count = !git ls-files --exclude-standard | xargs wc -l
+line-count-untracked = !git ls-untracked | xargs wc -l
 
 # Divergence (commits we added and commits remote added)
 div = divergence
@@ -45,7 +52,7 @@ r = !git l -30
 ra = !git r --all
 l = "!source ~/.githelpers && pretty_git_log"
 la = !git l --all
-sync = !find . -maxdepth 2 -type d -name .git -execdir git pull \\;
+sync = "!find . -maxdepth 2 -type d -name .git -execdir git pull \\;"
 lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 pod = push origin develop
 hd = !git head
@@ -63,12 +70,14 @@ default = upstream
 [pull]
 rebase = true
 
+[diff]
+tool = default-difftool
+
+[difftool]
+cmd = code --wait --new-window --diff $LOCAL $REMOTE
+
 [filter "lfs"]
-  clean = git-lfs clean %f
-  smudge = git-lfs smudge %f
-  required = true
-  
-[winUpdater]
-	recentlySeenVersion = 2.25.0.windows.1
-[credential]
-	helper = manager
+clean = git-lfs clean %f
+smudge = git-lfs smudge %f
+required = true
+process = git-lfs filter-process
