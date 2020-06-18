@@ -27,6 +27,7 @@ setopt HIST_REDUCE_BLANKS
 SCRIPT_PATH=${(%):-%x}
 SCRIPT_DIR=$(readlink $(dirname $SCRIPT_PATH))
 export DOTFILES_DIR=$(dirname $SCRIPT_DIR)
+export BASE16_DIR="$DOTFILES_DIR/base16"
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
@@ -39,3 +40,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   source $DOTFILES_DIR/macos/.zshrc 
 fi
 
+# Base16 Shell
+export CLICOLOR=1
+BASE16_SHELL="$BASE16_DIR/shell"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"

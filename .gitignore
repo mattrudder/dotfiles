@@ -67,3 +67,6 @@ Thumbs.db
 #########################
 .envrc
 
+# Cloned Dependencies #
+#######################
+base16

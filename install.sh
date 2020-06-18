@@ -46,7 +46,14 @@ which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup
 which starship >/dev/null || cargo install starship --force
 which volta >/dev/null || curl https://get.volta.sh | bash
 
-echo $OSTYPE
+
+BASE16_DIR="$DOTFILES_DIR/base16"
+mkdir -p $BASE16_DIR
+if [ ! -d "$BASE16_DIR/shell" ]; then
+  git clone https://github.com/chriskempson/base16-shell.git "$BASE16_DIR/shell"
+fi
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Installing macOS specific dependencies..."
   source $SCRIPT_PATH/macos/install.sh
 fi

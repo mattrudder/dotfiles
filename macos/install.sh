@@ -13,7 +13,8 @@ brew tap homebrew/cask-fonts
 
 # Hammerspoon
 brew cask install Hammerspoon
-ln -sFhi $DOTFILES_DIR/macos/hammerspoon $HOME/.hammerspoon
+rm -rf $HOME/.hammerspoon
+ln -sfn $DOTFILES_DIR/macos/hammerspoon $HOME/.hammerspoon
 
 # System Configs
 
