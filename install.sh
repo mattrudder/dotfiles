@@ -31,11 +31,11 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 # .configs
 link $SCRIPT_PATH/fish/ ~/.config/
 link $SCRIPT_PATH/nvim/ ~/.config/
+link $SCRIPT_PATH/bat/ ~/.config/
 
 # zsh configs
 link $SCRIPT_PATH/zsh/.zshenv ~/.zshenv
 link $SCRIPT_PATH/zsh ~/.zsh
-
 
 # Git configs
 link $SCRIPT_PATH/gitconfig ~/.gitconfig
