@@ -46,6 +46,11 @@ which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup
 which starship >/dev/null || cargo install starship --force
 which volta >/dev/null || curl https://get.volta.sh | bash
 
+# Install cargo based dependencies
+while IFS= read -r line
+do
+  cargo install --locked $line
+done < "$DOTFILES_DIR/cargo-deps"
 
 BASE16_DIR="$DOTFILES_DIR/base16"
 mkdir -p $BASE16_DIR

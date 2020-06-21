@@ -52,3 +52,10 @@ zstyle ':completion:*:*:git:*' script $ZDOTDIR/functions/git-completion.bash
 fpath=($ZDOTDIR/functions $fpath)
 
 autoload -Uz compinit && compinit
+
+eval `dircolors $ZDOTDIR/.dircolors`
+
+# Aliases
+alias ls='ls -G --color=auto'
+alias la='ls -la'
+alias cat='bat'
