@@ -19,4 +19,19 @@ function New-Link ($target, $link) {
     New-Item -Path $link -ItemType SymbolicLink -Value $target -Force | Out-Null
 }
 
+function ssh-copy-id([string]$userAtMachine){
+    if ($userAtMachine -eq "") {
+        Write-Error "USAGE: ssh-copy-id user@server.hostname"
+        return
+    }
+
+    $publicKey = "$ENV:USERPROFILE" + "/.ssh/id_rsa.pub"
+    if (!(Test-Path "$publicKey")){
+        Write-Error "ERROR: failed to open ID file '$publicKey': No such file" 
+        return           
+    }
+    
+    & Get-Content "$publicKey" | ssh $userAtMachine "umask 077; test -d .ssh || mkdir .ssh ; cat >> .ssh/authorized_keys || exit 1"
+}
+
 New-Alias which Get-Command
