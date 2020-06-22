@@ -38,6 +38,8 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   source $DOTFILES_DIR/macos/.zshrc 
+elif [[ "$OSTYPE" == "linux"* ]]; then
+  source $DOTFILES_DIR/linux/.zshrc 
 fi
 
 # Base16 Shell
@@ -56,6 +58,4 @@ autoload -Uz compinit && compinit
 eval `dircolors $ZDOTDIR/.dircolors`
 
 # Aliases
-alias ls='ls -G --color=auto'
-alias la='ls -la'
 alias cat='bat'
