@@ -42,23 +42,27 @@ link $SCRIPT_PATH/gitconfig ~/.gitconfig
 link $SCRIPT_PATH/githelpers ~/.githelpers
 link $SCRIPT_PATH/gitignore ~/.gitignore
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Installing macOS specific dependencies..."
+  source $SCRIPT_PATH/macos/install.sh
+elif [[ "$OSTYPE" == "linux"* ]]; then
+  echo "Installing Linux specific dependencies..."
+  source $SCRIPT_PATH/linux/install.sh
+else
+  echo "No platform specific dependencies for $OSTYPE!"
+fi
+
 which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh
-which starship >/dev/null || cargo install starship --force
 which volta >/dev/null || curl https://get.volta.sh | bash
 
 # Install cargo based dependencies
-while IFS= read -r line
+while IFS= read -r line || [ -n "$line" ] 
 do
-  cargo install --locked $line
+  which $line >/dev/null || cargo install --locked --force $line
 done < "$DOTFILES_DIR/cargo-deps"
 
 BASE16_DIR="$DOTFILES_DIR/base16"
 mkdir -p $BASE16_DIR
 if [ ! -d "$BASE16_DIR/shell" ]; then
   git clone https://github.com/chriskempson/base16-shell.git "$BASE16_DIR/shell"
-fi
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  echo "Installing macOS specific dependencies..."
-  source $SCRIPT_PATH/macos/install.sh
 fi
