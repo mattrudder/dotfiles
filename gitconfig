@@ -1,7 +1,7 @@
 [user]
-name = Matt Rudder
 useConfigOnly = true
-email = rudderm@twitch.tv
+name = Matt Rudder
+email = matt@mattrudder.com
 
 [color]
 ui = auto
@@ -81,3 +81,6 @@ clean = git-lfs clean %f
 smudge = git-lfs smudge %f
 required = true
 process = git-lfs filter-process
+
+[include]
+path = ~/dev/.gitconfig
