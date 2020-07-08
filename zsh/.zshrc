@@ -29,10 +29,16 @@ SCRIPT_DIR=$(readlink $(dirname $SCRIPT_PATH))
 export DOTFILES_DIR=$(dirname $SCRIPT_DIR)
 export BASE16_DIR="$DOTFILES_DIR/base16"
 
+# Rust
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# Go
+export GOPATH="$HOME/dev/go"
+export PATH="$GOPATH/bin:$PATH"
 
 eval "$(starship init zsh)"
 
+# JS
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 
