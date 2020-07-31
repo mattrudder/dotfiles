@@ -65,3 +65,8 @@ eval `dircolors $ZDOTDIR/.dircolors`
 
 # Aliases
 alias cat='bat'
+alias ls='lsd --icon never'
+alias ll='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+alias lt='ls --tree'

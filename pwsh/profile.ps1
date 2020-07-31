@@ -1,6 +1,3 @@
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$Env:TERM="xterm-256colors"
-
 Invoke-Expression (&starship init powershell)
 
 Import-Module DockerCompletion
@@ -19,14 +16,14 @@ function New-Link ($target, $link) {
     New-Item -Path $link -ItemType SymbolicLink -Value $target -Force | Out-Null
 }
 
-function ssh-copy-id([string]$userAtMachine){
+function ssh-copy-id([string]$userAtMachine) {
     if ($userAtMachine -eq "") {
         Write-Error "USAGE: ssh-copy-id user@server.hostname"
         return
     }
 
     $publicKey = "$ENV:USERPROFILE" + "/.ssh/id_rsa.pub"
-    if (!(Test-Path "$publicKey")){
+    if (!(Test-Path "$publicKey")) {
         Write-Error "ERROR: failed to open ID file '$publicKey': No such file" 
         return           
     }
@@ -35,3 +32,11 @@ function ssh-copy-id([string]$userAtMachine){
 }
 
 New-Alias which Get-Command
+
+Remove-Alias "ls"
+
+function ls { lsd.exe --icon never $args }
+function ll { lsd.exe --icon never -l $args }
+function la { lsd.exe --icon never -a $args }
+function lla { lsd.exe --icon never -la $args }
+function lt { lsd.exe --icon never --tree $args }
