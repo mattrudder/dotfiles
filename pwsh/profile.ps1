@@ -2,7 +2,6 @@ Invoke-Expression (&starship init powershell)
 
 Import-Module DockerCompletion
 Import-Module $PSScriptRoot\modules\rustup.psm1
-Import-Module $PSScriptRoot\modules\volta.psm1
 
 if (Test-Path $Env:VCPKG_ROOT\scripts\posh-vcpkg) {
     Import-Module $Env:VCPKG_ROOT\scripts\posh-vcpkg
@@ -10,6 +9,12 @@ if (Test-Path $Env:VCPKG_ROOT\scripts\posh-vcpkg) {
 
 if (Test-Path $PSScriptRoot\modules\visualstudio.psm1) {
     Import-Module $PSScriptRoot\modules\visualstudio.psm1
+}
+
+# Volta
+Import-Module $PSScriptRoot\modules\volta.psm1
+if (Test-Path "$Env:LOCALAPPDATA\\Volta\\bin") {
+    $Env:PATH = "$Env:PATH;$Env:LOCALAPPDATA\\Volta\\bin"
 }
 
 function New-Link ($target, $link) {
