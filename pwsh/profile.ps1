@@ -13,8 +13,9 @@ if (Test-Path $PSScriptRoot\modules\visualstudio.psm1) {
 
 # Volta
 Import-Module $PSScriptRoot\modules\volta.psm1
-if (Test-Path "$Env:LOCALAPPDATA\\Volta\\bin") {
-    $Env:PATH = "$Env:PATH;$Env:LOCALAPPDATA\\Volta\\bin"
+$Env:VOLTA_HOME = "$Env:LOCALAPPDATA\Volta"
+if (Test-Path "$Env:VOLTA_HOME\bin") {
+    $Env:PATH = "$Env:PATH;$Env:VOLTA_HOME\bin"
 }
 
 function New-Link ($target, $link) {

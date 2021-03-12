@@ -84,3 +84,6 @@ process = git-lfs filter-process
 
 [include]
 path = ~/dev/.gitconfig
+
+[init]
+	defaultBranch = main
