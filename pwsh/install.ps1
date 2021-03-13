@@ -2,32 +2,17 @@
 # TODO: Add force parameter
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Install Scoop
-if (-not (Get-Command scoop)) {
-    Write-Output "installing scoop..."
-    Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh') | Out-Null
+if (-not (Get-Command 'winget' -ErrorAction SilentlyContinue)) {
+    Write-Output "Configuration requires winget: https://docs.microsoft.com/en-us/windows/package-manager/winget/"
+    Write-Output "Please install winget before running this"
+    Exit
 } else {
-    Write-Output "scoop already installed!"
+    Write-Output "TODO: Support winget import/export https://github.com/microsoft/winget-cli/pull/699"
 }
 
-$scoopapps = scoop export | ForEach-Object {
-  $_.Split()[0]
-}
-
-$scoopdeps = Get-Content $PSScriptRoot\scoopdeps
-
-if ($scoopdeps) {
-    foreach ($line in Get-Content $PSScriptRoot\scoopdeps) {
-        if (-not ($scoopapps -contains $line)) {
-            Write-Output "installing scoop package $line..."
-            scoop install $line > $null
-        }
-    }
-}
-
-if (-not (Get-Command code)) {
+if (-not (Get-Command 'code' -ErrorAction SilentlyContinue)) {
     Write-Output "installing vscode..."
-    scoop install vscode > $null
+    winget install vscode-system-x64 > $null
 }
 
 # Get an array of currently installed extensions
@@ -41,8 +26,26 @@ foreach ($line in Get-Content $PSScriptRoot\vsix) {
     }
 }
 
+if (-not (Get-Command 'rustup' -ErrorAction SilentlyContinue)) {
+    $rustup_init = (New-TemporaryFile).Name
+    Start-BitsTransfer -Source "https://win.rustup.rs/x86_64" -Destination "$rustup_init"
+    Move-Item -Path $rustup_init -Destination "rustup-init.exe" -Force
+    & ".\rustup-init.exe" -q -y
+    Write-Output "Restart your terminal and run .\install.ps1 again"
+    Exit
+}
+
+# Update rustup completions
+if (Get-Command 'rustup' -ErrorAction SilentlyContinue) {
+    Write-Output "updating rustup completions..."
+    rustup completions powershell > $PSScriptRoot\modules\rustup.psm1
+} else {
+    (New-Object System.Net.WebClient).DownloadFile("https://win.rustup.rs/x86_64", "rustup-init.exe")
+    Write-Output "rustup not found! please install rustup first and re-run this command."
+}
+
 # Install Starship
-if (-not (Get-Command starship)) {
+if (-not (Get-Command 'starship' -ErrorAction SilentlyContinue)) {
     Write-Output "installing starship.rs..."
     cargo install starship --force --quiet
 } else {
@@ -60,16 +63,8 @@ if (-not (Get-Module -ListAvailable -Name DockerCompletion)) {
 # pwsh module generation
 New-Item -ItemType Directory -Path $PSScriptRoot\modules -Force | Out-Null
 
-# Update rustup completions
-if (Get-Command rustup) {
-    Write-Output "updating rustup completions..."
-    rustup completions powershell > $PSScriptRoot\modules\rustup.psm1
-} else {
-    Write-Output "rustup not found! please install rustup first and re-run this command."
-}
-
 # Update volta completions
-if (Get-Command volta) {
+if (Get-Command 'volta' -ErrorAction SilentlyContinue) {
     Write-Output "updating volta completions..."
     volta completions powershell > $PSScriptRoot\modules\volta.psm1
 } else {
