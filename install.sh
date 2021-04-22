@@ -52,8 +52,10 @@ else
   echo "No platform specific dependencies for $OSTYPE!"
 fi
 
-which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh
+which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh -s -- --profile default --default-toolchain stable -y
 which volta >/dev/null || curl https://get.volta.sh | bash
+
+source $HOME/.cargo/env
 
 # Install cargo based dependencies
 while IFS= read -r line || [ -n "$line" ] 
@@ -62,7 +64,7 @@ do
 done < "$DOTFILES_DIR/cargo-deps"
 
 BASE16_DIR="$DOTFILES_DIR/base16"
-mkdir -p $BASE16_DIR
+mkdir -p "$BASE16_DIR"
 if [ ! -d "$BASE16_DIR/shell" ]; then
   git clone https://github.com/chriskempson/base16-shell.git "$BASE16_DIR/shell"
 fi
