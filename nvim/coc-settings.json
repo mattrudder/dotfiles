@@ -1,7 +1,0 @@
-{
-  "rust-analyzer.cargo-watch.enable": false,
-  "rust-analyzer.updates.channel": "nightly",
-  "rust-analyzer.procMacro.enable": true,
-  "rust-analyzer.cargo.loadOutDirsFromCheck": true
-}
-
