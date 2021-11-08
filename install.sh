@@ -13,6 +13,12 @@ popd > /dev/null
 
 export DOTFILES_DIR=$SCRIPT_PATH
 
+# Install Rust + rstow
+which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh -s -- --profile default --default-toolchain stable -y
+source $HOME/.cargo/env
+
+cargo install --git https://github.com/qboileau/rstow
+
 if ! [ -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
 fi
@@ -25,22 +31,16 @@ function link {
 }
 
 # vim configs
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+sh -c 'curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # .configs
-link $SCRIPT_PATH/fish/ ~/.config/
-link $SCRIPT_PATH/nvim/ ~/.config/
-link $SCRIPT_PATH/bat/ ~/.config/
-
-# zsh configs
-link $SCRIPT_PATH/zsh/.zshenv ~/.zshenv
-link $SCRIPT_PATH/zsh ~/.zsh
-
-# Git configs
-link $SCRIPT_PATH/gitconfig ~/.gitconfig
-link $SCRIPT_PATH/githelpers ~/.githelpers
-link $SCRIPT_PATH/gitignore ~/.gitignore
+rstow -s $SCRIPT_PATH/fish -t $HOME
+rstow -s $SCRIPT_PATH/nvim -t $HOME
+rstow -s $SCRIPT_PATH/bat -t $HOME
+rstow -s $SCRIPT_PATH/zsh -t $HOME
+rstow -s $SCRIPT_PATH/git -t $HOME
+rstow -s $SCRIPT_PATH/bin -t $HOME
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Installing macOS specific dependencies..."
@@ -52,10 +52,7 @@ else
   echo "No platform specific dependencies for $OSTYPE!"
 fi
 
-which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh -s -- --profile default --default-toolchain stable -y
 which volta >/dev/null || curl https://get.volta.sh | bash
-
-source $HOME/.cargo/env
 
 # Install cargo based dependencies
 while IFS= read -r line || [ -n "$line" ] 

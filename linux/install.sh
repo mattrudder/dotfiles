@@ -3,6 +3,7 @@
 
 # Install apt based dependencies
 if [ -x "$(command -v apt)" ]; then
+    echo "installing apt dependencies..."
     while IFS= read -r line || [ -n "$line" ]
     do
     which $line >/dev/null || yes | sudo apt install $line
@@ -10,4 +11,5 @@ if [ -x "$(command -v apt)" ]; then
 fi
 
 # Change shell to zsh
-chsh -s /usr/bin/zsh
+echo "changing shell to zsh..."
+chsh -s /usr/bin/zsh 2>&1 >/dev/null

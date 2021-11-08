@@ -26,7 +26,8 @@ setopt HIST_REDUCE_BLANKS
 # Get script directory, relative to the dotfiles repo
 SCRIPT_PATH=${(%):-%x}
 SCRIPT_DIR=$(readlink $(dirname $SCRIPT_PATH))
-export DOTFILES_DIR=$(dirname $SCRIPT_DIR)
+ZSHRC_DIR=$(dirname $SCRIPT_DIR)
+export DOTFILES_DIR=$(dirname $ZSHRC_DIR)
 export BASE16_DIR="$DOTFILES_DIR/base16"
 
 # Rust
@@ -70,3 +71,5 @@ alias ll='ls -l'
 alias la='ls -a'
 alias lla='ls -la'
 alias lt='ls --tree'
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
