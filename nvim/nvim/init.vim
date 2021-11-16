@@ -12,6 +12,7 @@ Plug 'kyazdani42/nvim-web-devicons'
 
 " LSP / Code Completion
 Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -75,7 +76,7 @@ endif
 
 let loaded_matchparen = 1
 nnoremap <leader>pv :Vex<CR>
-nnoremap <leader><CR> :so ~/.config/nvim/init.vim<CR>
+nnoremap <leader><CR> :so $MYVIMRC<CR>
 nnoremap <C-j> :cnext<CR>
 nnoremap <C-k> :cprev<CR>
 nnoremap <leader>y "+y

@@ -1,4 +1,5 @@
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone,noselect,noinsert
+set shortmess+=c
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 fun! LspLocationList()

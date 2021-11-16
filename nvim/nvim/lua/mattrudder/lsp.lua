@@ -1,6 +1,3 @@
-local sumneko_root_path = "/home/hex/dev/3p/lua-language-server"
-local sumneko_binary = sumneko_root_path .. "/bin/Linux/lua-language-server"
-
 vim.lsp.set_log_level("debug")
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -26,10 +23,18 @@ cmp.setup({
         end,
     },
     mapping = {
+        ["<C-p>"] = cmp.mapping.select_prev_item(),
+        ["<C-n>"] = cmp.mapping.select_next_item(),
+        ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+        ["<Tab>"] = cmp.mapping.select_next_item(),
         ["<C-u>"] = cmp.mapping.scroll_docs(-4),
         ["<C-d>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
         ["<C-e>"] = cmp.mapping.close(),
+        ["<CR>"] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+        }),
     },
     formatting = {
         format = function(entry, vim_item)
@@ -46,42 +51,84 @@ cmp.setup({
     },
 })
 
-local function config(_config)
+local function config(lsp_config, installer_config)
     return vim.tbl_deep_extend("force", {
         capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-    }, _config or {})
+    }, lsp_config or {}, installer_config or {})
 end
 
+local setups = {
+    ["rust_analyzer"] = function(_config)
+        _config.cmd = { _config.cmd[1] .. ".exe" }
+        print("RA CMD: " .. _config.cmd[1])
+        require("rust-tools").setup(_config)
+    end
+}
 
-require("lspconfig").tsserver.setup(config())
-require("lspconfig").jedi_language_server.setup(config())
-require("lspconfig").svelte.setup(config())
-require("lspconfig").rust_analyzer.setup(config())
-require("rust-tools").setup({})
-require("lspconfig").sumneko_lua.setup(config({
-    cmd = { sumneko_binary, "-E", sumneko_root_path .. "/main.lua" },
-	settings = {
-		Lua = {
-			runtime = {
-				-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-				version = "LuaJIT",
-				-- Setup your lua path
-				path = vim.split(package.path, ";"),
-			},
-			diagnostics = {
-				-- Get the language server to recognize the `vim` global
-				globals = { "vim" },
-			},
-			workspace = {
-				-- Make the server aware of Neovim runtime files
-				library = {
-					[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-					[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-				},
-			},
-		},
-	},
-}))
+local configs = {
+    ["rust_analyzer"] = {
+        tools = {
+            autoSetHints = true,
+            hover_with_actions = true,
+            inlay_hints = {
+                show_parameter_hints = true,
+                parameter_hints_prefix = "",
+                other_hints_prefix = "",
+            },
+        },
+        settings = {
+            ["rust_analyzer"] = {
+                checkOnSave = {
+                    command = "clippy",
+                },
+            },
+        },
+    },
+    ["sumneko_lua"] = {
+	    settings = {
+		    Lua = {
+			    runtime = {
+				    -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+				    version = "LuaJIT",
+				    -- Setup your lua path
+				    path = vim.split(package.path, ";"),
+			    },
+			    diagnostics = {
+				    -- Get the language server to recognize the `vim` global
+				    globals = { "vim" },
+			    },
+			    workspace = {
+				    -- Make the server aware of Neovim runtime files
+				    library = {
+					    [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+					    [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+				    },
+			    },
+		    },
+	    },
+    },
+}
+
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.on_server_ready(function(server)
+    local lsp_cfg = configs[server.name]
+    local installer_cfg = server:get_default_options()
+    local cmd = installer_cfg.cmd or { "" }
+    print("LSP " .. server.name .. " Path: " .. cmd[1])
+    local cfg = config(lsp_cfg, installer_cfg)
+
+    if lsp_cfg ~= nil then
+        print("Loading config for " .. server.name .. ".")
+    end
+
+    --print(vim.inspect(cfg))
+    local setup = setups[server.name]
+    if setup == nil then
+        server:setup(cfg)
+    else
+        setup(cfg)
+    end
+end)
 
 local opts = {
     highlight_hovered_item = true,
