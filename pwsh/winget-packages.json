@@ -1,0 +1,53 @@
+{
+	"$schema": "https://aka.ms/winget-packages.schema.1.0.json",
+	"CreationDate": "2021-05-17T19:05:22.944-00:00",
+	"Sources": [
+		{
+			"Packages": [
+				{
+					"Id": "Microsoft.WindowsTerminal"
+				},
+				{
+					"Id": "Microsoft.VisualStudioCode"
+				},
+				{
+					"Id": "Amazon.AWSCLI"
+				},
+				{
+					"Id": "7zip.7zip"
+				},
+				{
+					"Id": "Apple.iTunes"
+				},
+				{
+					"Id": "Microsoft.PowerShell"
+				},
+				{
+					"Id": "GitHub.cli"
+				},
+				{
+					"Id": "Discord.Discord"
+				},
+				{
+					"Id": "SlackTechnologies.Slack"
+				},
+				{
+					"Id": "Google.Chrome"
+				},
+				{
+					"Id": "Mozilla.Firefox"
+				},
+				{
+					"Id": "Microsoft.VisualStudio.2019.Community"
+				}
+			],
+			"SourceDetails": {
+				"Argument": "https://winget.azureedge.net/cache",
+				"Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+				"Name": "winget",
+				"Type": "Microsoft.PreIndexed.Package"
+			}
+		}
+	],
+	"WinGetVersion": "0.3.11201"
+}

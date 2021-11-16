@@ -6,9 +6,18 @@ if (-not (Get-Command 'winget' -ErrorAction SilentlyContinue)) {
     Write-Output "Configuration requires winget: https://docs.microsoft.com/en-us/windows/package-manager/winget/"
     Write-Output "Please install winget before running this"
     Exit
-} else {
-    Write-Output "TODO: Support winget import/export https://github.com/microsoft/winget-cli/pull/699"
 }
+else {
+    winget import -i $PSScriptRoot/winget-packages.json
+}
+
+if (-not (Get-Command 'choco' -ErrorAction SilentlyContinue)) {
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+}
+
+choco install mingw neovim
 
 if (-not (Get-Command 'code' -ErrorAction SilentlyContinue)) {
     Write-Output "installing vscode..."
@@ -39,7 +48,8 @@ if (-not (Get-Command 'rustup' -ErrorAction SilentlyContinue)) {
 if (Get-Command 'rustup' -ErrorAction SilentlyContinue) {
     Write-Output "updating rustup completions..."
     rustup completions powershell > $PSScriptRoot\modules\rustup.psm1
-} else {
+}
+else {
     (New-Object System.Net.WebClient).DownloadFile("https://win.rustup.rs/x86_64", "rustup-init.exe")
     Write-Output "rustup not found! please install rustup first and re-run this command."
 }
@@ -48,7 +58,8 @@ if (Get-Command 'rustup' -ErrorAction SilentlyContinue) {
 if (-not (Get-Command 'starship' -ErrorAction SilentlyContinue)) {
     Write-Output "installing starship.rs..."
     cargo install starship --force --quiet
-} else {
+}
+else {
     Write-Output "starship.rs already installed"
 }
 
@@ -56,7 +67,8 @@ if (-not (Get-Command 'starship' -ErrorAction SilentlyContinue)) {
 if (-not (Get-Module -ListAvailable -Name DockerCompletion)) {
     Write-Output "installing latest DockerCompletion module..."
     Install-Module -Name DockerCompletion -Confirm:$False -Force -Scope CurrentUser | Out-Null
-} else {
+}
+else {
     Write-Output "module DockerCompletion already installed"
 }
 
@@ -67,6 +79,7 @@ New-Item -ItemType Directory -Path $PSScriptRoot\modules -Force | Out-Null
 if (Get-Command 'volta' -ErrorAction SilentlyContinue) {
     Write-Output "updating volta completions..."
     volta completions powershell > $PSScriptRoot\modules\volta.psm1
-} else {
+}
+else {
     Write-Output "volta not found! please install volta first and re-run this command"
 }
