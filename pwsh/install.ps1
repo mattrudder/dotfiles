@@ -83,3 +83,14 @@ if (Get-Command 'volta' -ErrorAction SilentlyContinue) {
 else {
     Write-Output "volta not found! please install volta first and re-run this command"
 }
+
+# Stow for dotfile management
+cargo install --git https://github.com/mattrudder/rstow --branch 'symlink-windows'
+
+rstow -s $PSScriptRoot/../fish -t $HOME
+# TODO: Restructure vimrc to work cross-platform
+# rstow -s $PSScriptRoot/../nvim -t $HOME
+rstow -s $PSScriptRoot/../bat -t $HOME
+rstow -s $PSScriptRoot/../zsh -t $HOME
+rstow -s $PSScriptRoot/../git -t $HOME
+rstow -s $PSScriptRoot/../bin -t $HOME
