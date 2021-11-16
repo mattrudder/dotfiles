@@ -1,8 +1,9 @@
+let g:NERDCreateDefaultMappings = 0
+
 call plug#begin('~/.vim/plugged')
 
-" colorscheme
+" Color Schemes
 Plug 'vim-scripts/Wombat'
-
 
 " Editor Enhancements
 Plug 'editorconfig/editorconfig-vim'
@@ -44,8 +45,10 @@ Plug 'tpope/vim-projectionist' " for default actions based on file type
 " Telescope
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 " Snippets
 Plug 'L3MON4D3/LuaSnip'
@@ -54,9 +57,12 @@ Plug 'rafamadriz/friendly-snippets'
 " Formatting
 Plug 'sbdchd/neoformat'
 
+" Comments
+Plug 'preservim/nerdcommenter'
+
 call plug#end()
 
-colorscheme wombat
+filetype plugin on
 
 let mapleader = " "
 
@@ -77,6 +83,8 @@ nnoremap <leader>y "+y
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
+noremap <silent> <C-_> :call nerdcommenter#Comment("n", "Toggle")<CR>
+
 augroup highlight_yank
     autocmd!
     autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank({timeout = 40})
@@ -86,3 +94,12 @@ augroup MINE
     autocmd!
     autocmd BufWritePre lua,cpp,c,h,hpp,cxx,cc Neoformat
 augroup END
+
+" Needs to be created before switching color schemes
+augroup ColorSchemeTweaks
+  autocmd!
+  autocmd ColorScheme * highlight Normal guibg=NONE ctermbg=NONE
+  autocmd ColorScheme * highlight NonText guibg=NONE ctermbg=NONE
+augroup END
+
+colorscheme wombat

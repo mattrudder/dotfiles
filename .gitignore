@@ -51,8 +51,8 @@ emacs/savefile
 
 # Zsh generated files #
 #######################
-zsh/.zsh_history
-zsh/.zcompdump
+zsh/.zsh/.zsh_history
+zsh/.zsh/.zcompdump
 
 # OS generated files #
 ######################
