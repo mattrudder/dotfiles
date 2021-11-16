@@ -36,9 +36,6 @@
 				},
 				{
 					"Id": "Mozilla.Firefox"
-				},
-				{
-					"Id": "Microsoft.VisualStudio.2019.Community"
 				}
 			],
 			"SourceDetails": {

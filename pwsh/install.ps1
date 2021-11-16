@@ -12,12 +12,14 @@ else {
 }
 
 if (-not (Get-Command 'choco' -ErrorAction SilentlyContinue)) {
+    $InstallDir = 'C:\ProgramData\chocoportable'
+    $env:ChocolateyInstall = "$InstallDir"
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 }
 
-choco install mingw neovim
+choco install mingw neovim -y
 
 if (-not (Get-Command 'code' -ErrorAction SilentlyContinue)) {
     Write-Output "installing vscode..."
@@ -88,9 +90,18 @@ else {
 cargo install --git https://github.com/mattrudder/rstow --branch 'symlink-windows'
 
 rstow -s $PSScriptRoot/../fish -t $HOME
-# TODO: Restructure vimrc to work cross-platform
-# rstow -s $PSScriptRoot/../nvim -t $HOME
+rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../bat -t $HOME
 rstow -s $PSScriptRoot/../zsh -t $HOME
 rstow -s $PSScriptRoot/../git -t $HOME
 rstow -s $PSScriptRoot/../bin -t $HOME
+
+
+New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
+$uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+(New-Object Net.WebClient).DownloadFile(
+    $uri,
+    $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
+        "$Env:LOCALAPPDATA\nvim-data\site\autoload\plug.vim"
+    )
+)

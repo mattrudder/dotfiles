@@ -37,9 +37,8 @@ jsconfig.json
 *.orig
 *.swp
 *.eld
-vim/.netrwhist
-vim/backups
-vim/bundle
+nvim/.netrwhist
+nvim/backups
 
 # Emacs generated files #
 #########################
