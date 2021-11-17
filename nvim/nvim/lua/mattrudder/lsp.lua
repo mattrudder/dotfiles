@@ -59,8 +59,9 @@ end
 
 local setups = {
     ["rust_analyzer"] = function(_config)
-        _config.cmd = { _config.cmd[1] .. ".exe" }
-        print("RA CMD: " .. _config.cmd[1])
+        if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+            _config.cmd = { _config.cmd[1] .. ".exe" }
+        end
         require("rust-tools").setup(_config)
     end
 }
@@ -114,14 +115,8 @@ lsp_installer.on_server_ready(function(server)
     local lsp_cfg = configs[server.name]
     local installer_cfg = server:get_default_options()
     local cmd = installer_cfg.cmd or { "" }
-    print("LSP " .. server.name .. " Path: " .. cmd[1])
     local cfg = config(lsp_cfg, installer_cfg)
 
-    if lsp_cfg ~= nil then
-        print("Loading config for " .. server.name .. ".")
-    end
-
-    --print(vim.inspect(cfg))
     local setup = setups[server.name]
     if setup == nil then
         server:setup(cfg)

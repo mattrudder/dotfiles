@@ -36,11 +36,12 @@ sh -c 'curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
 
 # .configs
 rstow -s $SCRIPT_PATH/fish -t $HOME
-rstow -s $SCRIPT_PATH/nvim -t $HOME/.config
 rstow -s $SCRIPT_PATH/bat -t $HOME
 rstow -s $SCRIPT_PATH/zsh -t $HOME
 rstow -s $SCRIPT_PATH/git -t $HOME
 rstow -s $SCRIPT_PATH/bin -t $HOME
+rstow -s $SCRIPT_PATH/nvim -t $HOME/.config
+rstow -s $SCRIPT_PATH/alacritty -t $HOME/.config
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Installing macOS specific dependencies..."

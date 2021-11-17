@@ -90,11 +90,12 @@ else {
 cargo install --git https://github.com/mattrudder/rstow --branch 'symlink-windows'
 
 rstow -s $PSScriptRoot/../fish -t $HOME
-rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../bat -t $HOME
 rstow -s $PSScriptRoot/../zsh -t $HOME
 rstow -s $PSScriptRoot/../git -t $HOME
 rstow -s $PSScriptRoot/../bin -t $HOME
+rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
+rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 
 
 New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
