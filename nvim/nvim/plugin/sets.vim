@@ -29,6 +29,6 @@ if s:is_win
   set shell=cmd.exe
 "  set shellslash
 else
-  set shell=/usr/bin/zsh
+  set shell=zsh
 endif
 

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+    session=$1
+else
+    session=$(find $HOME $HOME/dev $HOME/dev/mattrudder -type d -mindepth 1 -maxdepth 1 | sed "s#^$HOME#~#" | fzf | sed "s#^~#$HOME#")
+fi
+
+if [[ -z $session ]]; then
+    clear
+    exit 0
+fi
+
+session_name=$(basename "$session" | tr . _)
+
+if ! tmux has-session -t "$session_name"; then 
+    tmux new-session -s "$session_name" -c "$session" -d
+fi
+
+if [ -z $TMUX ]; then
+    tmux -2 attach-session -t "$session_name"
+else 
+    tmux switch-client -t "$session_name"
+fi
+
+clear

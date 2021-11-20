@@ -30,6 +30,9 @@ ZSHRC_DIR=$(dirname $SCRIPT_DIR)
 export DOTFILES_DIR=$(dirname $ZSHRC_DIR)
 export BASE16_DIR="$DOTFILES_DIR/base16"
 
+# Dotfiles Scripts
+export PATH="$HOME/bin:$PATH"
+
 # Rust
 export PATH="$HOME/.cargo/bin:$PATH"
 
@@ -71,5 +74,8 @@ alias ll='ls -l'
 alias la='ls -a'
 alias lla='ls -la'
 alias lt='ls --tree'
+
+# Bindings
+bindkey -s ^f "tmux-sessionizer\n"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -80,11 +80,15 @@ nnoremap <leader><CR> :so $MYVIMRC<CR>
 nnoremap <C-j> :cnext<CR>
 nnoremap <C-k> :cprev<CR>
 nnoremap <leader>y "+y
+nnoremap <silent> <C-f> :silent !tmux neww tmux-sessionizer<CR>
+
+noremap <silent> <C-\> :call nerdcommenter#Comment("n", "Toggle")<CR>
 
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
-noremap <silent> <C-_> :call nerdcommenter#Comment("n", "Toggle")<CR>
+inoremap <C-e> <esc>$i<right>
+inoremap <C-a> <esc>0i
 
 augroup highlight_yank
     autocmd!
@@ -104,3 +108,4 @@ augroup ColorSchemeTweaks
 augroup END
 
 colorscheme wombat
+
