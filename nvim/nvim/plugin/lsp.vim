@@ -1,5 +1,4 @@
 set completeopt=menu,menuone,noselect,noinsert
-set shortmess+=c
 let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 
 fun! LspLocationList()
@@ -45,3 +44,5 @@ let g:compe.source.nvim_lua = v:true
 let g:compe.source.vsnip = v:true
 let g:compe.source.ultisnips = v:true
 let g:compe.source.luasnip = v:true
+
+

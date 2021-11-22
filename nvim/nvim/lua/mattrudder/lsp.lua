@@ -3,6 +3,9 @@ vim.lsp.set_log_level("debug")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+local lsp_status = require('lsp-status')
+lsp_status.register_progress()
+
 -- Setup nvim-cmp.
 local cmp = require("cmp")
 local source_mapping = {
@@ -31,10 +34,10 @@ cmp.setup({
         ["<C-d>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
         ["<C-e>"] = cmp.mapping.close(),
-        ["<CR>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Insert,
-            select = true,
-        }),
+        --["<CR>"] = cmp.mapping.confirm({
+            --behavior = cmp.ConfirmBehavior.Insert,
+            --select = true,
+        --}),
     },
     formatting = {
         format = function(entry, vim_item)
@@ -54,7 +57,7 @@ cmp.setup({
 local function config(lsp_config, installer_config)
     return vim.tbl_deep_extend("force", {
         capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-    }, lsp_config or {}, installer_config or {})
+    }, { capabilities = lsp_status.capabilities }, lsp_config or {}, installer_config or {})
 end
 
 local setups = {
@@ -117,6 +120,13 @@ lsp_installer.on_server_ready(function(server)
     local cmd = installer_cfg.cmd or { "" }
     local cfg = config(lsp_cfg, installer_cfg)
 
+    cfg.on_attach = function(client, bufnr)
+        if lsp_cfg.on_attach then
+            lsp_cfg.on_attach(client, bufnr)
+        end
+        lsp_status.on_attach(client)
+    end
+
     local setup = setups[server.name]
     if setup == nil then
         server:setup(cfg)
@@ -124,11 +134,6 @@ lsp_installer.on_server_ready(function(server)
         setup(cfg)
     end
 end)
-
-local opts = {
-    highlight_hovered_item = true,
-    show_guides = true,
-}
 
 require("symbols-outline").setup({
     highlight_hovered_item = true,

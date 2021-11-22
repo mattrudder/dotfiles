@@ -1,5 +1,6 @@
 require("mattrudder.telescope")
 require("mattrudder.lsp")
+require("mattrudder.statusline")
 
 P = function(v)
   print(vim.inspect(v))

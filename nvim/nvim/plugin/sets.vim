@@ -22,7 +22,7 @@ set cmdheight=1
 set updatetime=50
 set shortmess+=c
 set colorcolumn=120
-
+set noshowmode
 
 let s:is_win = has('win32') || has('win64')
 if s:is_win
