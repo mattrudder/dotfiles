@@ -3,7 +3,7 @@
 if [[ $# -eq 1 ]]; then
     session=$1
 else
-    session=$(find $HOME $HOME/dev $HOME/dev/mattrudder -type d -mindepth 1 -maxdepth 1 | sed "s#^$HOME#~#" | fzf | sed "s#^~#$HOME#")
+    session=$(find -L $HOME $HOME/dev $HOME/dev/mattrudder -type d -mindepth 1 -maxdepth 1 | sed "s#^$HOME#~#" | fzf | sed "s#^~#$HOME#")
 fi
 
 if [[ -z $session ]]; then

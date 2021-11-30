@@ -19,6 +19,7 @@ lspkind.init({
     with_text = true,
 })
 
+local luasnip = require("luasnip")
 cmp.setup({
     snippet = {
         expand = function(args)
@@ -28,16 +29,30 @@ cmp.setup({
     mapping = {
         ["<C-p>"] = cmp.mapping.select_prev_item(),
         ["<C-n>"] = cmp.mapping.select_next_item(),
-        ["<S-Tab>"] = cmp.mapping.select_prev_item(),
-        ["<Tab>"] = cmp.mapping.select_next_item(),
         ["<C-u>"] = cmp.mapping.scroll_docs(-4),
         ["<C-d>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
         ["<C-e>"] = cmp.mapping.close(),
-        --["<CR>"] = cmp.mapping.confirm({
-            --behavior = cmp.ConfirmBehavior.Insert,
-            --select = true,
-        --}),
+        ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.confirm({ select = true })
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's'}),
+        ["<CR>"] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = false,
+        }),
     },
     formatting = {
         format = function(entry, vim_item)
@@ -134,6 +149,29 @@ lsp_installer.on_server_ready(function(server)
         setup(cfg)
     end
 end)
+
+local nvim_lsp = require('lspconfig')
+local servers = { 'rust_analyzer' }
+for _, lsp in ipairs(servers) do
+    local server = nvim_lsp[lsp]
+    local lsp_cfg = configs[server.name]
+    local cfg = config(lsp_cfg)
+
+    cfg.on_attach = function(client, bufnr)
+        if lsp_cfg.on_attach then
+            lsp_cfg.on_attach(client, bufnr)
+        end
+        lsp_status.on_attach(client)
+    end
+
+    local setup = setups[server.name]
+    if setup == nil then
+        server:setup(cfg)
+    else
+        setup(cfg)
+    end
+end
+
 
 require("symbols-outline").setup({
     highlight_hovered_item = true,
