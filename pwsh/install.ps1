@@ -94,6 +94,7 @@ rstow -s $PSScriptRoot/../bat -t $HOME
 rstow -s $PSScriptRoot/../zsh -t $HOME
 rstow -s $PSScriptRoot/../git -t $HOME
 rstow -s $PSScriptRoot/../bin -t $HOME
+rstow -s $PSScriptRoot/../wezterm -t $HOME
 rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 

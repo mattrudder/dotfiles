@@ -41,6 +41,7 @@ rstow -s $SCRIPT_PATH/zsh -t $HOME
 rstow -s $SCRIPT_PATH/git -t $HOME
 rstow -s $SCRIPT_PATH/bin -t $HOME
 rstow -s $SCRIPT_PATH/tmux -t $HOME
+rstow -s $SCRIPT_PATH/wezterm -t $HOME
 
 rstow -s $SCRIPT_PATH/nvim -t $HOME/.config
 rstow -s $SCRIPT_PATH/alacritty -t $HOME/.config
