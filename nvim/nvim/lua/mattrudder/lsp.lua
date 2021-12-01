@@ -20,10 +20,13 @@ lspkind.init({
 })
 
 local luasnip = require("luasnip")
+local saga = require("lspsaga")
+saga.init_lsp_saga()
+
 cmp.setup({
     snippet = {
         expand = function(args)
-            require("luasnip").lsp_expand(args.body)
+            luasnip.lsp_expand(args.body)
         end,
     },
     mapping = {
@@ -198,3 +201,9 @@ require("luasnip.loaders.from_vscode").lazy_load({
     exclude = {}
 })
 
+require("lsp-colors").setup({
+    Error = "#db4b4b",
+    Warning = "#e0af68",
+    Information = "#0db9d7",
+    Hint = "#10B981"
+})

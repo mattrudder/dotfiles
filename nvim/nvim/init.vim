@@ -4,6 +4,8 @@ call plug#begin('~/.vim/plugged')
 
 " Color Schemes
 Plug 'vim-scripts/Wombat'
+Plug 'molok/vim-vombato-colorscheme'
+Plug 'folke/lsp-colors.nvim'
 
 " Editor Enhancements
 Plug 'editorconfig/editorconfig-vim'
@@ -108,5 +110,5 @@ augroup ColorSchemeTweaks
   autocmd ColorScheme * highlight NonText guibg=NONE ctermbg=NONE
 augroup END
 
-colorscheme wombat
+colorscheme vombato
 
