@@ -22,6 +22,8 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_FIND_NO_DUPS
 # removes blank lines from history
 setopt HIST_REDUCE_BLANKS
+# do not save history entries when starting the command with a space
+setopt HIST_IGNORE_SPACE
 
 # Get script directory, relative to the dotfiles repo
 SCRIPT_PATH=${(%):-%x}
@@ -75,7 +77,7 @@ alias la='ls -a'
 alias lla='ls -la'
 alias lt='ls --tree'
 
-# Bindings
-bindkey -s ^f "tmux-sessionizer\n"
+# Bindings (include spaces to avoid flooding history)
+bindkey -s ^f " tmux-sessionizer; fc -R\n"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

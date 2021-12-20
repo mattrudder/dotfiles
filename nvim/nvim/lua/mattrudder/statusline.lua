@@ -13,7 +13,8 @@ lualine.setup {
     sections = {
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diff'},
-        lualine_c = {'filename', {'diagnostics', sources={'nvim_lsp', 'coc'}}, "require('mattrudder.lspstatus').status()"},--"require'lsp-status'.status()"},
+        -- lualine_c = {'filename', {'diagnostics', sources={'nvim_lsp', 'coc'}}, "require('mattrudder.lspstatus').status()"},--"require'lsp-status'.status()"},
+        lualine_c = {'filename', {'diagnostics', sources={'nvim_lsp', 'coc'}}, 'g:coc_status'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
         lualine_z = {'location'}
