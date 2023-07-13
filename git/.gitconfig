@@ -83,7 +83,7 @@ required = true
 process = git-lfs filter-process
 
 [include]
-path = ~/dev/.gitconfig
+path = ~/.gitconfig-work
 
 [init]
 	defaultBranch = main
