@@ -12,19 +12,4 @@ asdf plugin add yarn https://github.com/twuni/asdf-yarn
 asdf plugin add golang https://github.com/asdf-community/asdf-golang
 asdf plugin add zig https://github.com/cheetah/asdf-zig
 
-asdf install nodejs latest
-asdf global nodejs latest
-
-asdf install neovim latest
-asdf global neovim latest
-
-asdf install yarn latest
-asdf global yarn latest
-
-asdf install golang latest
-asdf global golang latest
-
-asdf install zig latest
-asdf global zig latest
-
 asdf install
