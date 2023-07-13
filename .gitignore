@@ -52,6 +52,10 @@ emacs/savefile
 #######################
 zsh/.zsh/.zsh_history
 zsh/.zsh/.zcompdump
+zsh/.zcompdump
+zsh/.zcompcache/
+zsh/.zsh/.zsh_sessions/
+zsh/.zsh_history
 
 # OS generated files #
 ######################
@@ -70,3 +74,4 @@ Thumbs.db
 # Cloned Dependencies #
 #######################
 base16
+extern

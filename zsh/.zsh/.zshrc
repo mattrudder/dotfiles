@@ -45,21 +45,25 @@ export PATH="$GOPATH/bin:$PATH"
 eval "$(starship init zsh)"
 
 # JS
-export VOLTA_HOME="$HOME/.volta"
+#export VOLTA_HOME="$HOME/.volta"
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+
 export PATH="$VOLTA_HOME/bin:$PATH"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  source $DOTFILES_DIR/macos/.zshrc 
+  source $DOTFILES_DIR/macos/.zshrc
 elif [[ "$OSTYPE" == "linux"* ]]; then
-  source $DOTFILES_DIR/linux/.zshrc 
+  source $DOTFILES_DIR/linux/.zshrc
 fi
 
 # Base16 Shell
 export CLICOLOR=1
-BASE16_SHELL="$BASE16_DIR/shell"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
+# BASE16_SHELL="$BASE16_DIR/shell"
+# [ -n "$PS1" ] && \
+#     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+#         eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 # Load Git completion
 zstyle ':completion:*:*:git:*' script $ZDOTDIR/functions/git-completion.bash
