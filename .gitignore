@@ -57,6 +57,10 @@ zsh/.zcompcache/
 zsh/.zsh/.zsh_sessions/
 zsh/.zsh_history
 
+# Generated files in bin #
+##########################
+bin/.local/*
+
 # OS generated files #
 ######################
 .DS_Store

@@ -35,6 +35,11 @@ export BASE16_DIR="$DOTFILES_DIR/base16"
 # Dotfiles Scripts
 export PATH="$HOME/bin:$PATH"
 
+# ASDF version manager
+export ASDF_DIR="$HOME/.asdf"
+fpath=(${ADSF_DIR}/completions $fpath)
+source "${ASDF_DIR}/asdf.sh"
+
 # Rust
 export PATH="$HOME/.cargo/bin:$PATH"
 

@@ -35,17 +35,19 @@ sh -c 'curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 # .configs
-rstow -s $SCRIPT_PATH/fish -t $HOME
-rstow -s $SCRIPT_PATH/bat -t $HOME
-rstow -s $SCRIPT_PATH/zsh -t $HOME
-rstow -s $SCRIPT_PATH/git -t $HOME
-rstow -s $SCRIPT_PATH/bin -t $HOME
-rstow -s $SCRIPT_PATH/tmux -t $HOME
-rstow -s $SCRIPT_PATH/wezterm -t $HOME
+rstow -f -s $SCRIPT_PATH/fish -t $HOME
+rstow -f -s $SCRIPT_PATH/bat -t $HOME
+rstow -f -s $SCRIPT_PATH/zsh -t $HOME
+rstow -f -s $SCRIPT_PATH/git -t $HOME
+rstow -f -s $SCRIPT_PATH/bin -t $HOME
+rstow -f -s $SCRIPT_PATH/tmux -t $HOME
+rstow -f -s $SCRIPT_PATH/wezterm -t $HOME
+rstow -f -s $SCRIPT_PATH/asdf -t $HOME
 
-rstow -s $SCRIPT_PATH/nvim -t $HOME/.config
-rstow -s $SCRIPT_PATH/alacritty -t $HOME/.config
-rstow -s $SCRIPT_PATH/kitty -t $HOME/.config
+rstow -f -s $SCRIPT_PATH/nvim -t $HOME/.config
+rstow -f -s $SCRIPT_PATH/alacritty -t $HOME/.config
+rstow -f -s $SCRIPT_PATH/kitty -t $HOME/.config
+rstow -f -s $SCRIPT_PATH/starship -t $HOME/.config
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -58,7 +60,9 @@ else
   echo "No platform specific dependencies for $OSTYPE!"
 fi
 
-which volta >/dev/null || curl https://get.volta.sh | bash
+source $SCRIPT_PATH/posix/install.sh
+
+#which volta >/dev/null || curl https://get.volta.sh | bash
 
 # Install cargo based dependencies
 while IFS= read -r line || [ -n "$line" ] 

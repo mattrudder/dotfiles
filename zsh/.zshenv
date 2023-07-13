@@ -4,3 +4,4 @@ if [ -f $HOME/.zshlocal ]; then
   source $HOME/.zshlocal
 fi
 source "$HOME/.cargo/env"
+. "$HOME/.cargo/env"
