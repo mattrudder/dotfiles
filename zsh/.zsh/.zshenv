@@ -5,3 +5,5 @@ if [ -f $HOME/.zshlocal ]; then
 fi
 source "$HOME/.cargo/env"
 . "$HOME/.cargo/env"
+
+
