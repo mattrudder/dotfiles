@@ -21,9 +21,9 @@ return require('packer').startup(function(use)
     branch = 'dev-v3',
     requires = {
       -- LSP Support
-      {'neovim/nvim-lspconfig'},            
+      {'neovim/nvim-lspconfig'},
       {'williamboman/mason.nvim'},
-      {'williamboman/mason-lspconfig.nvim'}, 
+      {'williamboman/mason-lspconfig.nvim'},
 
       -- Autocompletion
       {'hrsh7th/nvim-cmp'},

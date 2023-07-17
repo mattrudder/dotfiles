@@ -34,20 +34,29 @@ function link {
 sh -c 'curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-# .configs
-rstow -f -s $SCRIPT_PATH/fish -t $HOME
-rstow -f -s $SCRIPT_PATH/bat -t $HOME
-rstow -f -s $SCRIPT_PATH/zsh -t $HOME
-rstow -f -s $SCRIPT_PATH/git -t $HOME
-rstow -f -s $SCRIPT_PATH/bin -t $HOME
-rstow -f -s $SCRIPT_PATH/tmux -t $HOME
-rstow -f -s $SCRIPT_PATH/wezterm -t $HOME
-rstow -f -s $SCRIPT_PATH/asdf -t $HOME
 
-rstow -f -s $SCRIPT_PATH/nvim -t $HOME/.config
-rstow -f -s $SCRIPT_PATH/alacritty -t $HOME/.config
-rstow -f -s $SCRIPT_PATH/kitty -t $HOME/.config
-rstow -f -s $SCRIPT_PATH/starship -t $HOME/.config
+function stow {
+  local src=$1
+  local dest=$2
+
+  echo "❯❯❯ Stowing $src to $dest"
+  rstow -f -s "$src" -t "$dest"
+}
+
+# .configs
+stow $SCRIPT_PATH/fish $HOME
+stow $SCRIPT_PATH/bat $HOME
+stow $SCRIPT_PATH/zsh $HOME
+stow $SCRIPT_PATH/git $HOME
+stow $SCRIPT_PATH/bin $HOME
+stow $SCRIPT_PATH/tmux $HOME
+stow $SCRIPT_PATH/wezterm $HOME
+stow $SCRIPT_PATH/asdf $HOME
+
+stow $SCRIPT_PATH/nvim $HOME/.config
+stow $SCRIPT_PATH/alacritty $HOME/.config
+stow $SCRIPT_PATH/kitty $HOME/.config
+# stow $SCRIPT_PATH/starship $HOME/.config
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then

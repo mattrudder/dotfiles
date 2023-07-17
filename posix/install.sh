@@ -10,7 +10,7 @@ if ! [ -d "$HOME/dev" ]; then
   mkdir $HOME/dev
 fi
 
-if ! [ -d "$HOME/dev/marmot.nvim"]; then
+if ! [ -d "$HOME/dev/marmot.nvim" ]; then
   git clone --depth 1 git@github.com:mattrudder/marmot.nvim "$HOME/dev/marmot.nvim"
   pushd "$HOME/dev/marmot.nvim"
   git remote add upstream "git@github.com:rktjmp/lush-template.git"
