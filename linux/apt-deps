@@ -2,3 +2,5 @@ build-essential
 pkg-config
 libssl-dev
 zsh
+curl
+cmake
