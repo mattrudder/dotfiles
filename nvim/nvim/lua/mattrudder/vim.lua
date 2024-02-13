@@ -1,7 +1,34 @@
 vim.opt.guicursor = ""
-vim.opt.guifont = "BerkeleyMono:h12"
+vim.opt.guifont = "Berkeley Mono:h12"
+
+local alpha = function()
+    return string.format("%x", math.floor(255 * (vim.g.neovide_transparency_point or 0.8)))
+end
+
+if vim.g.neovide then
+    local change_transparency = function(delta)
+        vim.g.neovide_transparency_point = vim.g.neovide_transparency_point + delta
+        vim.g.neovide_background_color = "#303030" .. alpha()
+    end
+
+    vim.g.neovide_transparency = 0.0
+    vim.g.neovide_transparency_point = 0.8
+    vim.g.neovide_background_color = "#303030" .. alpha()
+
+    vim.keymap.set({ "n", "v", "o" }, "<C-+>", function ()
+        change_transparency(0.01)
+    end)
+
+    vim.keymap.set({ "n", "v", "o" }, "<C-->", function ()
+        change_transparency(-0.01)
+    end)
+
+    vim.g.neovide_refresh_rate = 175
+    vim.g.neovide_refresh_rate_idle = 20
+end
 
 if vim.g.neoray then
+    vim.opt.guifont = "BerkeleyMono:h12"
     vim.cmd [[
         NeoraySet CursorAnimTime 0.07
         NeoraySet Transparency 0.95
