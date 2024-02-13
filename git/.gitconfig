@@ -63,6 +63,7 @@ pager = less -R
 editor = code -r -w
 excludesfile = ~/.gitignore
 autocrlf = input
+longpaths = true
 
 [push]
 default = upstream
@@ -85,5 +86,11 @@ process = git-lfs filter-process
 [include]
 path = ~/.gitconfig-work
 
+[include]
+path = ~/.gitconfig-local
+
 [init]
-	defaultBranch = main
+defaultBranch = main
+
+[branch]
+autosetuprebase = always

@@ -79,3 +79,8 @@ Thumbs.db
 #######################
 base16
 extern
+
+# Local configs that shouldn't be sync'd #
+##########################################
+.gitconfig-local
+.gitconfig-work
