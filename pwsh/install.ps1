@@ -11,15 +11,16 @@ else {
     winget import -i $PSScriptRoot/winget-packages.json
 }
 
-if (-not (Get-Command 'choco' -ErrorAction SilentlyContinue)) {
-    $InstallDir = 'C:\ProgramData\chocoportable'
-    $env:ChocolateyInstall = "$InstallDir"
-    Set-ExecutionPolicy Bypass -Scope Process -Force
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-}
 
-choco install mingw neovim -y
+#if (-not (Get-Command 'choco' -ErrorAction SilentlyContinue)) {
+#    $InstallDir = 'C:\ProgramData\chocoportable'
+#    $env:ChocolateyInstall = "$InstallDir"
+#    Set-ExecutionPolicy Bypass -Scope Process -Force
+#    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+#    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+#}
+
+# choco install mingw neovim -y
 
 if (-not (Get-Command 'code' -ErrorAction SilentlyContinue)) {
     Write-Output "installing vscode..."
@@ -95,6 +96,7 @@ rstow -s $PSScriptRoot/../zsh -t $HOME
 rstow -s $PSScriptRoot/../git -t $HOME
 rstow -s $PSScriptRoot/../bin -t $HOME
 rstow -s $PSScriptRoot/../wezterm -t $HOME
+rstow -s $PSScriptRoot/../starship -t $HOME
 rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 

@@ -52,6 +52,7 @@ stow $SCRIPT_PATH/bin $HOME
 stow $SCRIPT_PATH/tmux $HOME
 stow $SCRIPT_PATH/wezterm $HOME
 stow $SCRIPT_PATH/asdf $HOME
+stow $SCRIPT_PATH/starship $HOME
 
 stow $SCRIPT_PATH/nvim $HOME/.config
 stow $SCRIPT_PATH/alacritty $HOME/.config

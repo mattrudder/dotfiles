@@ -1,8 +1,20 @@
 vim.opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20"
-vim.opt.guifont = "Berkeley Mono:h14"
+if vim.loop.os_uname().sysname == "Darwin" then
+    vim.opt.guifont = "Berkeley Mono:h14"
+else
+    vim.opt.guifont = "Berkeley Mono:h12"
+end
+
+local alpha = function()
+    return string.format("%x", math.floor(255 * (vim.g.neovide_transparency or 0.8)))
+end
 
 if vim.g.neovide then
     vim.g.neovide_transparency = 0.85
+    if vim.loop.os_uname().sysname ~= "Darwin" then
+        vim.g.neovide_background_color = "#242424" .. alpha()
+    end
+
     vim.g.neovide_refresh_rate = 175
     vim.g.neovide_refresh_rate_idle = 20
 end
