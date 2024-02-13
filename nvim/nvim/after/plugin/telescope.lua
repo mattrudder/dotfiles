@@ -4,7 +4,7 @@ local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<C-,>', function()
     builtin.find_files {
         cwd = "~/.dotfiles/nvim/nvim",
-        prompt_title = "VIMRC"
+        prompt_title = ".vimrc"
     }
 end)
 
