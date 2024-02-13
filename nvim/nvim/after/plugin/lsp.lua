@@ -6,7 +6,7 @@ lsp.on_attach(function(client, bufnr)
 	local opts = { buffer = bufnr }
 	local bind = vim.keymap.set
 
-	bind('n', '<C-r>', function() vim.lsp.buf.rename() end, opts)
+    bind('n', '<leader>rr', function() vim.lsp.buf.rename() end, opts)
 	bind('n', 'K', vim.lsp.buf.hover, opts)
 	bind('n', '<C-k>', vim.lsp.buf.signature_help, opts)
 	bind('n', 'gD', vim.lsp.buf.declaration, opts)

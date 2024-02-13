@@ -4,6 +4,18 @@ function FormatDocument()
     })
 end
 
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+local bind = vim.keymap.set
 
-vim.keymap.set("n", "<leader>kf", FormatDocument)
+bind('n', '<leader>pv', vim.cmd.Ex)
+
+bind('n', '<leader>kf', FormatDocument)
+
+bind('i', '"', '""<left>')
+bind('i', "'", "''<left>")
+bind('i', '(', '()<left>')
+bind('i', '[', '[]<left>')
+bind('i', '{', '{}<left>')
+
+bind('i', '<C-s>', '<C-O>:w<CR>')
+bind('n', '<C-s>', ':w<CR>')
+

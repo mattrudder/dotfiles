@@ -1,4 +1,13 @@
 vim.opt.guicursor = ""
+vim.opt.guifont = "BerkeleyMono:h12"
+
+if vim.g.neoray then
+    vim.cmd [[
+        NeoraySet CursorAnimTime 0.07
+        NeoraySet Transparency 0.95
+        NeoraySet TargetTPS 175
+    ]]
+end
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
