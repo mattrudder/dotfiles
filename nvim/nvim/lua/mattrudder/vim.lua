@@ -12,6 +12,7 @@ end
 if vim.g.neovide then
     vim.g.neovide_transparency = 0.85
     if vim.loop.os_uname().sysname ~= "Darwin" then
+        vim.g.neovide_transparency = 0.9
         vim.g.neovide_background_color = "#242424" .. alpha()
     end
 
@@ -58,3 +59,5 @@ vim.opt.updatetime = 50
 vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
+
+

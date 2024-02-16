@@ -36,7 +36,10 @@
 				},
 				{
 					"Id": "Mozilla.Firefox"
-				}
+				},
+                {
+                    "Id": "junegunn.fzf"
+                }
 			],
 			"SourceDetails": {
 				"Argument": "https://winget.azureedge.net/cache",

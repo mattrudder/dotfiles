@@ -20,6 +20,7 @@ return require('packer').startup(function(use)
     requires = { { 'nvim-lua/plenary.nvim' } }
   }
 
+
   use {
     "mattrudder/marmot.nvim",
     requires = "rktjmp/lush.nvim",
@@ -50,6 +51,8 @@ return require('packer').startup(function(use)
     requires = "neovim/nvim-lspconfig"
   }
 
+  use 'simrat39/rust-tools.nvim'
+
   use {
     'glepnir/galaxyline.nvim',
     branch = 'main',
@@ -71,6 +74,15 @@ return require('packer').startup(function(use)
         })
     end
   }
+
+  -- completions
+  use 'hrsh7th/nvim-cmp'
+  use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/cmp-nvim-lua'
+  use 'hrsh7th/cmp-nvim-lsp-signature-help'
+  use 'hrsh7th/cmp-vsnip'
+  use 'hrsh7th/cmp-buffer'
+  use 'hrsh7th/vim-vsnip'
 
   if packer_bootstrap then
     require('packer').sync()

@@ -39,6 +39,8 @@ function ssh-copy-id([string]$userAtMachine) {
 
 New-Alias which Get-Command
 
+Invoke-Expression (& { (zoxide init --cmd cd powershell | Out-String) })
+
 Remove-Alias "ls"
 
 function ls { lsd.exe --icon never $args }
