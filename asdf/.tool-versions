@@ -2,4 +2,4 @@ nodejs 16.20.1
 neovim 0.9.1
 yarn 1.22.19
 golang 1.20.6
-zig master
+zig 0.13.0
