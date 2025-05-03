@@ -27,7 +27,7 @@ ms-vscode.sublime-keybindings
 ms-vscode.vscode-typescript-tslint-plugin
 nicollasr.vscode-streamdeck
 redhat.vscode-yaml
-rust-lang.rust
+rust-lang.rust-analyzer
 serayuzgur.crates
 shyykoserhiy.vscode-spotify
 slevesque.shader

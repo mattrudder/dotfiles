@@ -31,33 +31,36 @@ local function font_with_fallback(name, params)
   return wezterm.font_with_fallback(names, params)
 end
 
-config.harfbuzz_features = { "liga=0" }
-config.font_size = 11.0
-config.font = font_with_fallback("Berkeley Mono", { weight = "Medium" })
+config.harfbuzz_features = { "zero=1" }
+config.font_size = 12.0
+local font_family = "Berkeley Mono"
+-- local font_family = "Ubuntu Mono"
+-- config.font = font_with_fallback("Berkeley Mono", { weight = "Medium" })
+config.font = font_with_fallback(font_family, { weight = "Medium" })
 config.font_rules = {
   -- Select a fancy italic font for italic text
   {
     italic = true,
-    font = font_with_fallback("Berkeley Mono", { weight = "Medium", italic = true }),
+    font = font_with_fallback(font_family, { weight = "Medium", italic = true }),
   },
 
   -- Similarly, a fancy bold+italic font
   {
     italic = true,
     intensity = "Bold",
-    font = font_with_fallback("Berkeley Mono", { weight = "Black", italic = true }),
+    font = font_with_fallback(font_family, { weight = "Black", italic = true }),
   },
 
   -- Make regular bold text a different color to make it stand out even more
   {
     intensity = "Bold",
-    font = font_with_fallback("Berkeley Mono", { weight = "Black", foreground = "tomato" }),
+    font = font_with_fallback(font_family, { weight = "Black", foreground = "tomato" }),
   },
 
   -- For half-intensity text, use a lighter weight font
   {
     intensity = "Half",
-    font = font_with_fallback("Berkeley Mono", { weight = "Light" }),
+    font = font_with_fallback(font_family, { weight = "Light" }),
   },
 }
 

@@ -58,11 +58,20 @@ if (Test-Path $vswhere) {
     if ($vsPath) {
         $vsvars = Join-Path $vsPath "Common7\Tools\VsDevCmd.bat"
         if (Test-Path $vsvars) {
-            Invoke-Environment $vsvars
+            $cmd = "`"" + $vsvars + "`""
+            cmd /c "$cmd -arch=x64 > nul 2>&1 && set" | . { process {
+                if ($_ -match '^([^=]+)=(.*)') {
+                    [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2])
+                }
+            }}
         }
     }
 }
 
+$emsdk = "D:\emsdk\emsdk_env.bat"
+if (Test-Path $emsdk) {
+    Invoke-Environment -Command $emsdk
+}
 
 # Volta
 Import-Module $PSScriptRoot\modules\volta.psm1
