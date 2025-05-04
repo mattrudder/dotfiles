@@ -5,8 +5,6 @@ deerawan.vscode-dash
 dracula-theme.theme-dracula
 dsznajder.es7-react-js-snippets
 EditorConfig.EditorConfig
-eg2.tslint
-equinusocio.vsc-material-theme-icons
 evanw.glslx-vscode
 fabiospampinato.vscode-todo-plus
 gerane.Theme-Wombat
@@ -23,16 +21,13 @@ ms-vscode-remote.vscode-remote-extensionpack
 ms-vscode.cpptools
 ms-vscode.Go
 ms-vscode.powershell
-ms-vscode.sublime-keybindings
-ms-vscode.vscode-typescript-tslint-plugin
 nicollasr.vscode-streamdeck
 redhat.vscode-yaml
 rust-lang.rust-analyzer
-serayuzgur.crates
 shyykoserhiy.vscode-spotify
 slevesque.shader
-slevesque.vscode-autohotkey
-slevesque.vscode-hexdump
+mark-wiemer.vscode-autohotkey-plus-plus
+ms-vscode.hexeditor
 vadimcn.vscode-lldb
 wayou.vscode-todo-highlight
 webfreak.debug
