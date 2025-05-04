@@ -13,11 +13,27 @@ popd > /dev/null
 
 export DOTFILES_DIR=$SCRIPT_PATH
 
-# Install Rust + rstow
-which rustup >/dev/null || curl --proto '=https' --tlsv1.2 -sS https://sh.rustup.rs | sh -s -- --profile default --default-toolchain stable -y
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Installing macOS specific dependencies..."
+  source $SCRIPT_PATH/macos/install.sh
+elif [[ "$OSTYPE" == "linux"* ]]; then
+  echo "Installing Linux specific dependencies..."
+  source $SCRIPT_PATH/linux/install.sh
+else
+  echo "No platform specific dependencies for $OSTYPE!"
+fi
+
+source $SCRIPT_PATH/posix/install.sh
 source $HOME/.cargo/env
 
-cargo install --git https://github.com/qboileau/rstow
+# Install cargo based dependencies
+while IFS= read -r line || [ -n "$line" ] 
+do
+  which $line >/dev/null || cargo install --locked --force $line
+done < "$DOTFILES_DIR/cargo-deps"
+
+# Install rstow for config management
+cargo install --git https://github.com/qboileau/rstow --quiet
 
 if ! [ -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
@@ -59,24 +75,6 @@ stow $SCRIPT_PATH/alacritty $HOME/.config
 stow $SCRIPT_PATH/kitty $HOME/.config
 # stow $SCRIPT_PATH/starship $HOME/.config
 
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  echo "Installing macOS specific dependencies..."
-  source $SCRIPT_PATH/macos/install.sh
-elif [[ "$OSTYPE" == "linux"* ]]; then
-  echo "Installing Linux specific dependencies..."
-  source $SCRIPT_PATH/linux/install.sh
-else
-  echo "No platform specific dependencies for $OSTYPE!"
-fi
-
-source $SCRIPT_PATH/posix/install.sh
-
-# Install cargo based dependencies
-while IFS= read -r line || [ -n "$line" ] 
-do
-  which $line >/dev/null || cargo install --locked --force $line
-done < "$DOTFILES_DIR/cargo-deps"
 
 BASE16_DIR="$DOTFILES_DIR/base16"
 mkdir -p "$BASE16_DIR"
