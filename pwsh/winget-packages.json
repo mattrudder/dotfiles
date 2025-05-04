@@ -8,16 +8,31 @@
 					"Id": "Microsoft.WindowsTerminal"
 				},
 				{
+					"Id": "Microsoft.PowerShell"
+				},
+				{
 					"Id": "Microsoft.VisualStudioCode"
+				},
+				{
+					"Id": "Microsoft.VisualStudio.Locator"
+				},
+				{
+					"Id": "Microsoft.VisualStudio.2022.Community"
+				},
+				{
+					"Id": "JetBrains.Toolbox"
+				},
+				{
+					"Id": "AgileBits.1Password"
+				},
+				{
+					"Id": "AgileBits.1Password.CLI"
 				},
 				{
 					"Id": "Amazon.AWSCLI"
 				},
 				{
 					"Id": "7zip.7zip"
-				},
-				{
-					"Id": "Apple.iTunes"
 				},
 				{
 					"Id": "Microsoft.PowerShell"
@@ -37,9 +52,12 @@
 				{
 					"Id": "Mozilla.Firefox"
 				},
-                {
-                    "Id": "junegunn.fzf"
-                }
+				{
+					"Id": "jdx.mise"
+				},
+				{
+					"Id": "Tailscale.Tailscale"
+				}
 			],
 			"SourceDetails": {
 				"Argument": "https://winget.azureedge.net/cache",

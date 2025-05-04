@@ -73,11 +73,9 @@ if (Test-Path $emsdk) {
     Invoke-Environment -Command $emsdk
 }
 
-# Volta
-Import-Module $PSScriptRoot\modules\volta.psm1
-$Env:VOLTA_HOME = "$Env:LOCALAPPDATA\Volta"
-if (Test-Path "$Env:VOLTA_HOME\bin") {
-    $Env:PATH = "$Env:PATH;$Env:VOLTA_HOME\bin"
+if (Get-Command 'mise' -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (mise activate pwsh | Out-String) })
+    # $env:PATH += ";$env:LOCALAPPDATA\mise\shims" 
 }
 
 function New-Link ($target, $link) {

@@ -35,10 +35,8 @@ export BASE16_DIR="$DOTFILES_DIR/base16"
 # Dotfiles Scripts
 export PATH="$HOME/bin:$PATH"
 
-# ASDF version manager
-export ASDF_DIR="$HOME/.asdf"
-fpath=(${ADSF_DIR}/completions $fpath)
-source "${ASDF_DIR}/asdf.sh"
+# Mise
+eval "$(mise activate zsh)"
 
 # Rust
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -50,12 +48,9 @@ export PATH="$GOPATH/bin:$PATH"
 eval "$(starship init zsh)"
 
 # JS
-#export VOLTA_HOME="$HOME/.volta"
 export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
 [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-
-export PATH="$VOLTA_HOME/bin:$PATH"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   source $DOTFILES_DIR/macos/.zshrc

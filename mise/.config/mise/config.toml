@@ -1,0 +1,11 @@
+[tools]
+cmake = "latest"
+fzf = "latest"
+github-cli = "latest"
+go = "latest"
+jq = "latest"
+node = "latest"
+rust = "latest"
+starship = "latest"
+zig = "latest"
+zoxide = "latest"

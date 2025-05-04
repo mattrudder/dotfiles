@@ -40,5 +40,4 @@ set -g fish_color_valid_path  blue    --underline
 . $fish_home/aliases.fish
 
 starship init fish | source
-set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
+mise activate fish | source

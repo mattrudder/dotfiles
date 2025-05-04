@@ -4,3 +4,6 @@ libssl-dev
 zsh
 curl
 cmake
+gpg
+sudo
+wget

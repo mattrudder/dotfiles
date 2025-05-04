@@ -10,6 +10,10 @@ else
 fi
 
 brew tap homebrew/cask-fonts
+brew install mise
+
+source `mise activate bash`
+mise install
 
 # Hammerspoon
 brew install --cask Hammerspoon
