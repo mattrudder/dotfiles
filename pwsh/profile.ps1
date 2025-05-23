@@ -1,7 +1,4 @@
-Invoke-Expression (&starship init powershell)
-
 Import-Module DockerCompletion
-Import-Module $PSScriptRoot\modules\rustup.psm1
 
 if (Test-Path $Env:VCPKG_ROOT\scripts\posh-vcpkg) {
     Import-Module $Env:VCPKG_ROOT\scripts\posh-vcpkg
@@ -73,11 +70,6 @@ if (Test-Path $emsdk) {
     Invoke-Environment -Command $emsdk
 }
 
-if (Get-Command 'mise' -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (mise activate pwsh | Out-String) })
-    # $env:PATH += ";$env:LOCALAPPDATA\mise\shims" 
-}
-
 function New-Link ($target, $link) {
     New-Item -Path $link -ItemType SymbolicLink -Value $target -Force | Out-Null
 }
@@ -99,8 +91,6 @@ function ssh-copy-id([string]$userAtMachine) {
 
 New-Alias which Get-Command
 
-Invoke-Expression (& { (zoxide init --cmd cd powershell | Out-String) })
-
 Remove-Alias "ls"
 
 function ls { lsd.exe --icon never $args }
@@ -108,3 +98,13 @@ function ll { lsd.exe --icon never -l $args }
 function la { lsd.exe --icon never -a $args }
 function lla { lsd.exe --icon never -la $args }
 function lt { lsd.exe --icon never --tree $args }
+
+
+if (Get-Command "mise" -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (mise activate pwsh --shims | Out-String) })
+}
+
+# The following commands are installed via mise, so must come after mise is activated.
+Invoke-Expression (starship init powershell)
+Invoke-Expression (& { (zoxide init --cmd cd powershell | Out-String) })
+Invoke-Expression (rustup completions powershell | Out-String)

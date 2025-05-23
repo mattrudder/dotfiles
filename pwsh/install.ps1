@@ -65,6 +65,7 @@ rstow -s $PSScriptRoot/../wezterm -t $HOME
 rstow -s $PSScriptRoot/../starship -t $HOME
 rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
+rstow -s $PSScriptRoot/../mise -t $HOME
 
 
 # New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
