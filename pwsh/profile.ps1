@@ -93,11 +93,11 @@ New-Alias which Get-Command
 
 Remove-Alias "ls"
 
-function ls { lsd.exe --icon never $args }
-function ll { lsd.exe --icon never -l $args }
-function la { lsd.exe --icon never -a $args }
-function lla { lsd.exe --icon never -la $args }
-function lt { lsd.exe --icon never --tree $args }
+function ls { lsd --icon never $args }
+function ll { lsd --icon never -l $args }
+function la { lsd --icon never -a $args }
+function lla { lsd --icon never -la $args }
+function lt { lsd --icon never --tree $args }
 
 
 if (Get-Command "mise" -ErrorAction SilentlyContinue) {
