@@ -1,0 +1,11 @@
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	dark = true
+    syntax-theme = ansi
+    line-numbers = true
+[merge]
+	conflictStyle = zdiff3
+[include]
+    path = ~/.dotfiles/delta/themes.gitconfig

@@ -33,7 +33,7 @@ export DOTFILES_DIR=$(dirname $ZSHRC_DIR)
 export BASE16_DIR="$DOTFILES_DIR/base16"
 
 # Dotfiles Scripts
-export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # Mise
 eval "$(mise activate zsh)"

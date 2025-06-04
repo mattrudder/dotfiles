@@ -8,5 +8,4 @@ fi
 
 source "$HOME/.cargo/env"
 
-
-. "$HOME/.cargo/env"
+export MANPAGER="less -R --use-color -Dd+r -Du+b"

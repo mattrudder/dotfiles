@@ -59,7 +59,7 @@ hd = !git head
 br = branch
 
 [core]
-pager = less -R
+	pager = delta
 editor = code -r -w
 excludesfile = ~/.gitignore
 autocrlf = input
@@ -82,6 +82,9 @@ clean = git-lfs clean %f
 smudge = git-lfs smudge %f
 required = true
 process = git-lfs filter-process
+
+[include]
+path = ~/.dotfiles/delta/.gitconfig
 
 [include]
 path = ~/.gitconfig-work
