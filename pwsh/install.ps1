@@ -12,8 +12,8 @@ else {
 }
 
 # Activate mise and install devtools
-if (Get-Command 'mise' -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (mise activate pwsh | Out-String) })
+if (Get-Command C:\Users\matt\AppData\Local\Microsoft\WinGet\Links\mise.exe -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { ( C:\Users\matt\AppData\Local\Microsoft\WinGet\Links\mise.exe activate pwsh | Out-String ) })
     Invoke-Expression "mise install"
 }
 

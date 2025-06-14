@@ -65,10 +65,10 @@ if (Test-Path $vswhere) {
     }
 }
 
-$emsdk = "D:\emsdk\emsdk_env.bat"
-if (Test-Path $emsdk) {
-    Invoke-Environment -Command $emsdk
-}
+# $emsdk = "D:\emsdk\emsdk_env.bat"
+# if (Test-Path $emsdk) {
+#     Invoke-Environment -Command $emsdk
+# }
 
 function New-Link ($target, $link) {
     New-Item -Path $link -ItemType SymbolicLink -Value $target -Force | Out-Null
@@ -98,10 +98,13 @@ function ll { lsd --icon never -l $args }
 function la { lsd --icon never -a $args }
 function lla { lsd --icon never -la $args }
 function lt { lsd --icon never --tree $args }
+function claude {
+    wsl -e zsh -c "source ~/.zsh/.zshrc; claude $args"
+}
 
 
 if (Get-Command "mise" -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (mise activate pwsh --shims | Out-String) })
+    Invoke-Expression (& mise activate pwsh | Out-String)
 }
 
 # The following commands are installed via mise, so must come after mise is activated.

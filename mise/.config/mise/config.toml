@@ -6,7 +6,11 @@ go = "latest"
 jq = "latest"
 node = "latest"
 python = "latest"
-rust = "latest"
+rust = "stable"
 starship = "latest"
 zig = "latest"
 zoxide = "latest"
+
+[settings]
+experimental = true
+idiomatic_version_file_enable_tools = ["rust"]
