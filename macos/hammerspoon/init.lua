@@ -32,32 +32,32 @@ local function move_window_to_next_screen()
 end
 
 -- Left Half: Ctrl+Shift+Cmd+Left
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Left", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Left", function()
     move_window(0, 0, 0.5, 1)
 end)
 
 -- Right Half: Ctrl+Shift+Cmd+Right
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Right", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Right", function()
     move_window(0.5, 0, 0.5, 1)
 end)
 
 -- Top Half: Ctrl+Shift+Cmd+Top
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Up", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Up", function()
     move_window(0, 0, 1, 0.5)
 end)
 
 -- Bottom Half: Ctrl+Shift+Cmd+Down
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Down", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Down", function()
     move_window(0, 0.5, 1, 0.5)
 end)
 
 -- Maximize: Ctrl+Shift+Cmd+Return
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Return", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Return", function()
     move_window(0, 0, 1, 1)
 end)
 
 -- Centered 75%: Ctrl+Shift+Cmd+Delete
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Delete", function()
+hs.hotkey.bind({"ctrl", "shift"}, "Delete", function()
     move_window(0.125, 0.125, 0.75, 0.75)
 end)
 
@@ -67,17 +67,12 @@ hs.hotkey.bind({"ctrl", "shift"}, "Space", function()
 end)
 
 -- Sleep: Shift+Cmd+F12
-hs.hotkey.bind({"shift", "cmd"}, "f12", function()
+hs.hotkey.bind({"ctrl", "shift"}, "f12", function()
     hs.execute("pmset displaysleepnow")
 end)
 
 -- Console
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "C", function()
-    hs.toggleConsole()
-end)
-
--- Console
-hs.hotkey.bind({"ctrl", "shift", "cmd"}, "C", function()
+hs.hotkey.bind({"ctrl", "shift"}, "C", function()
     hs.toggleConsole()
 end)
 
