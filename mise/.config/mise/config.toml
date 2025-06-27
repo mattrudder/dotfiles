@@ -1,13 +1,15 @@
 [tools]
-cmake = "latest"
+bun = "latest"
 fzf = "latest"
+gh = "latest"
 github-cli = "latest"
 go = "latest"
 jq = "latest"
 node = "latest"
 python = "latest"
-rust = "stable"
+rust = "latest"
 starship = "latest"
+uv = "latest"
 zig = "latest"
 zoxide = "latest"
 

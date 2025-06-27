@@ -12,9 +12,12 @@ else {
 }
 
 # Activate mise and install devtools
-if (Get-Command C:\Users\matt\AppData\Local\Microsoft\WinGet\Links\mise.exe -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { ( C:\Users\matt\AppData\Local\Microsoft\WinGet\Links\mise.exe activate pwsh | Out-String ) })
-    Invoke-Expression "mise install"
+$mise = Join-Path ${PSScriptRoot} "..\bin\.local\bin\mise.exe" -Resolve
+Write-Output "Running mise from $mise"
+
+if (Test-Path $mise) {
+    & $mise install
+    & $mise activate pwsh | Out-String | Invoke-Expression
 }
 
 # Get an array of currently installed extensions
@@ -63,10 +66,18 @@ rstow -s $PSScriptRoot/../git -t $HOME
 rstow -s $PSScriptRoot/../bin -t $HOME
 rstow -s $PSScriptRoot/../wezterm -t $HOME
 rstow -s $PSScriptRoot/../starship -t $HOME
+rstow -s $PSScriptRoot/../tools -t $HOME
 rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../mise -t $HOME
 
+# Add local bin to path
+$newPath = "$env:USERPROFILE\.local\bin"
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($userPath -notlike "*$newPath*") {
+    $updatedPath = "$userPath;$newPath"
+    [Environment]::SetEnvironmentVariable("Path", $updatedPath, "User")
+}
 
 # New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
 # $uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
