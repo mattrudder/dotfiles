@@ -1,9 +1,8 @@
 
 -- Window Management
-local function move_window(x, y, w, h)
+local function move_window_to_screen(screen, x, y, w, h)
     local win = hs.window.focusedWindow()
     local f = win:frame()
-    local screen = win:screen()
     local max = screen:frame()
 
     f.x = max.x + (max.w * x)
@@ -11,6 +10,25 @@ local function move_window(x, y, w, h)
     f.w = max.w * w
     f.h = max.h * h
     win:setFrame(f)
+end
+
+local function move_window(x, y, w, h)
+    local win = hs.window.focusedWindow()
+    move_window_to_screen(win:screen(), x, y, w, h)
+end
+
+local function move_window_to_next_screen()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    local next = screen:next()
+
+    local w = f.w / max.w
+    local h = f.h / max.h
+    local x = (f.x - max.x) / max.w
+    local y = (f.y - max.y) / max.h
+    move_window_to_screen(next, x, y, w, h)
 end
 
 -- Left Half: Ctrl+Shift+Cmd+Left
@@ -41,6 +59,11 @@ end)
 -- Centered 75%: Ctrl+Shift+Cmd+Delete
 hs.hotkey.bind({"ctrl", "shift", "cmd"}, "Delete", function()
     move_window(0.125, 0.125, 0.75, 0.75)
+end)
+
+-- Move window to next screen: Ctrl+Shift+Space
+hs.hotkey.bind({"ctrl", "shift"}, "Space", function()
+    move_window_to_next_screen()
 end)
 
 -- Sleep: Shift+Cmd+F12
