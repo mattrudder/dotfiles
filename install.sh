@@ -40,7 +40,7 @@ do
 done < "$DOTFILES_DIR/cargo-deps"
 
 # Install rstow for config management
-cargo install --git https://github.com/qboileau/rstow --quiet
+mise exec -- cargo install --git https://github.com/qboileau/rstow --quiet
 
 if ! [ -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
