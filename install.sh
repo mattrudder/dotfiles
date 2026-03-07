@@ -24,7 +24,13 @@ else
 fi
 
 source $SCRIPT_PATH/posix/install.sh
-source $HOME/.cargo/env
+if command -v mise &>/dev/null; then
+  mise trust -y
+  eval "$(mise activate bash)"
+  mise install
+elif [ -f "$HOME/.cargo/env" ]; then
+  source $HOME/.cargo/env
+fi
 
 # Install cargo based dependencies
 while IFS= read -r line || [ -n "$line" ] 

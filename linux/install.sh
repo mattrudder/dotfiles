@@ -33,5 +33,9 @@ if [ -x "$(command -v yum)" ]; then
 fi
 
 # Change shell to zsh
-echo "changing shell to zsh..."
-chsh -s /usr/bin/zsh 2>&1 >/dev/null
+if [ -t 0 ]; then
+  echo "changing shell to zsh..."
+  if [ "$SHELL" != "/usr/bin/zsh" ]; then
+    chsh -s /usr/bin/zsh 2>&1 >/dev/null
+  fi
+fi
