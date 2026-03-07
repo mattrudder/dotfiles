@@ -17,9 +17,9 @@ zoxide = "latest"
 experimental = true
 idiomatic_version_file_enable_tools = ["rust"]
 
-[alias]
+[tool_alias]
 
-[alias.zig]
+[tool_alias.zig]
 
-[alias.zig.versions]
+[tool_alias.zig.versions]
 nightly = "0.16.0-dev.1316+181b25ce4"
