@@ -10,9 +10,16 @@ python = "latest"
 rust = "latest"
 starship = "latest"
 uv = "latest"
-zig = "latest"
+zig = "master"
 zoxide = "latest"
 
 [settings]
 experimental = true
 idiomatic_version_file_enable_tools = ["rust"]
+
+[alias]
+
+[alias.zig]
+
+[alias.zig.versions]
+nightly = "0.16.0-dev.1316+181b25ce4"

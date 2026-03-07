@@ -3,6 +3,12 @@
 # text editors and tools
 .idea
 .vscode
+.sdd
 *.sublime-project
 *.sublime-workspace
 *.rdbg
+.claude/settings.local.json
+
+# Agent Steering Files
+.claude
+CLAUDE.md

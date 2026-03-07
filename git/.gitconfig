@@ -59,8 +59,8 @@ hd = !git head
 br = branch
 
 [core]
-	pager = delta
-editor = code -r -w
+pager = delta
+editor = code -n -w
 excludesfile = ~/.gitignore
 autocrlf = input
 longpaths = true
@@ -97,3 +97,6 @@ defaultBranch = main
 
 [branch]
 autosetuprebase = always
+[safe]
+	directory = D:/3p/zed
+	directory = D:/3p/zig

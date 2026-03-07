@@ -98,9 +98,9 @@ function ll { lsd --icon never -l $args }
 function la { lsd --icon never -a $args }
 function lla { lsd --icon never -la $args }
 function lt { lsd --icon never --tree $args }
-function claude {
-    wsl -e zsh -c "source ~/.zsh/.zshrc; claude $args"
-}
+# function claude {
+#     wsl -e zsh -c "source ~/.zsh/.zshrc; claude $args"
+# }
 
 
 if (Get-Command "mise" -ErrorAction SilentlyContinue) {
