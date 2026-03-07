@@ -28,7 +28,9 @@ if command -v mise &>/dev/null; then
   mise trust -y
   eval "$(mise activate bash)"
   mise install
-  export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+  # Ensure we can call mise tools and cargo installed tools within this same execution.
+  export PATH="$HOME/.local/share/mise/shims:$HOME/.cargo/bin:$PATH"
 elif [ -f "$HOME/.cargo/env" ]; then
   source $HOME/.cargo/env
 fi
