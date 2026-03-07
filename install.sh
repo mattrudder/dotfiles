@@ -33,13 +33,13 @@ elif [ -f "$HOME/.cargo/env" ]; then
 fi
 
 # Install cargo based dependencies
-while IFS= read -r line || [ -n "$line" ] 
+while IFS= read -r line || [ -n "$line" ]
 do
   which $line >/dev/null || cargo install --locked --force $line
 done < "$DOTFILES_DIR/cargo-deps"
 
 # Install rstow for config management
-cargo install --git https://github.com/qboileau/rstow --quiet
+mise exec -- cargo install --git https://github.com/qboileau/rstow --quiet
 
 if ! [ -d "$HOME/.config" ]; then
   mkdir -p "$HOME/.config"
