@@ -5,6 +5,9 @@
 		{
 			"Packages": [
 				{
+					"Id": "jdx.mise"
+				},
+				{
 					"Id": "Microsoft.WindowsTerminal"
 				},
 				{
@@ -17,7 +20,7 @@
 					"Id": "Microsoft.VisualStudio.Locator"
 				},
 				{
-					"Id": "Microsoft.VisualStudio.2022.Community"
+					"Id": "Microsoft.VisualStudio.2026.Community"
 				},
 				{
 					"Id": "JetBrains.Toolbox"

@@ -12,12 +12,13 @@ else {
 }
 
 # Activate mise and install devtools
-$mise = Join-Path ${PSScriptRoot} "..\bin\.local\bin\mise.exe" -Resolve
-Write-Output "Running mise from $mise"
-
-if (Test-Path $mise) {
-    & $mise install
-    & $mise activate pwsh | Out-String | Invoke-Expression
+if (Get-Command 'mise' -ErrorAction SilentlyContinue) {
+    & mise install
+    & mise activate pwsh | Out-String | Invoke-Expression
+} else {
+    Write-Output "Installation requires mise in path"
+    Write-Output "Please restart your terminal and run the installer again"
+    Exit
 }
 
 # Get an array of currently installed extensions
@@ -32,6 +33,7 @@ foreach ($line in Get-Content $PSScriptRoot\vsix) {
 }
 
 # Install dependencies from cargo-deps
+# TODO: consider upgrading this to cargo-binstall
 foreach ($line in Get-Content $PSScriptRoot\..\cargo-deps) {
     if (-not (Get-Command $line -ErrorAction SilentlyContinue)) {
         Write-Output "installing $line..."
