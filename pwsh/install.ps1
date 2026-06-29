@@ -72,6 +72,7 @@ rstow -s $PSScriptRoot/../tools -t $HOME
 rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../mise -t $HOME
+rstow -s $PSScriptRoot/../emacs -t $HOME
 
 # Add local bin to path
 $newPath = "$env:USERPROFILE\.local\bin"
