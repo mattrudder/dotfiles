@@ -1,0 +1,9 @@
+elpa/
+
+# ignore local settings files
+ido.last
+recentf
+smex-items
+projects
+.lsp-session-v1
+.mc-lists.el
