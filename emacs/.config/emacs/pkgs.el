@@ -1,6 +1,5 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
 
 (use-package magit
   :ensure t
@@ -23,12 +22,16 @@
 ;  (global-set-key (kbd "M-x") 'smex)
 ;  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
-(use-package counsel
+(use-package vertico
   :ensure t
-  :config
-  (setopt ivy-use-virtual-buffers t)
-  (setopt ivy-count-format "(%d/%d)")
-  (ivy-mode 1))
+  :init
+  (vertico-mode))
+
+(use-package consult
+  :ensure t
+  :custom
+  (consult-narrow-key "<")
+  (consult-async-split-style 'semicolon))
 
 (use-package multiple-cursors
   :ensure t
@@ -40,40 +43,72 @@
   (global-set-key (kbd "C-\"") 'mc/skip-to-next-like-this)
   (global-set-key (kbd "C-:") 'mc/skip-to-previous-like-this))
 
+(use-package yasnippet
+  :ensure t
+  :config
+  (add-to-list 'yas-snippet-dirs "~/.config/emacs/snippets")
+  (yas-global-mode 1))
 
 (use-package cmake-mode
   :ensure t)
 
-(use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+(use-package go-mode
+  :ensure t)
 
-
-(use-package lsp-mode
-  :ensure t
+(use-package eglot
+  :hook ((c-mode . eglot-ensure)
+		 (c++-mode . eglot-ensure)
+		 (go-mode . eglot-ensure))
+  :custom
+  (eglot-events-buffer-size 0)
   :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (
-		 (c-mode . lsp-deferred)
-		 (c++-mode . lsp-deferred)
-		 (lsp-mode . lsp-enable-which-key-integration))
-  :bind (:map lsp-mode-map
-			  ("M-RET" . lsp-execute-code-action))
-  :commands (lsp lsp-deferred))
+  ;; Restrict gopls' workspace/symbol search to this module, excluding
+  ;; stdlib/dependencies, so consult-eglot-symbols isn't mixed with them.
+  ;; Verify against your gopls version's own settings docs if this doesn't
+  ;; take effect -- not verified against gopls source itself.
+  (setq-default eglot-workspace-configuration
+                '(:gopls (:symbolScope "workspace")))
+  :bind (:map eglot-mode-map
+			  ("M-RET" . eglot-code-actions)))
 
-(use-package lsp-ui
+(use-package consult-eglot
   :ensure t
-  :bind (:map lsp-mode-map
-			  ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-			  ([remap xref-find-references] . lsp-ui-peek-find-references))
-  :config
-  (lsp-ui-peek-enable 1)
-  (lsp-ui-doc-enable 1)
-  :commands lsp-ui-mode)
+  :after (consult eglot)
+  :bind (:map eglot-mode-map
+			  ("C-M-." . consult-eglot-symbols)))
+
+(add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 
 (use-package which-key
   :ensure t
   :config
   (which-key-mode))
+
+
+;; Corfu: Light and modern completion UI
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode)
+  :custom
+  (corfu-auto t)                 ;; Enable auto-completion
+  (corfu-auto-delay 0.0)         ;; Instant popup on dot
+  (corfu-auto-prefix 1)          ;; Trigger after 1 char
+  (corfu-cycle t)                ;; Allow cycling through candidates
+  (corfu-quit-no-match 'separator)) ;; Quit if no match
+
+;; Cape: Completion At Point Extensions (Bridges LSP to Corfu)
+(use-package cape
+  :ensure t
+  :init
+  ;; Add LSP/Capf to the completion list
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
+;; Recommended: Use the 'orderless' completion style for better filtering
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles . (partial-completion))))))

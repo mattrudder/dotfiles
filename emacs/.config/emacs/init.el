@@ -5,9 +5,6 @@
 
 (set-frame-font "Berkeley Mono 13" nil t)
 
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(scroll-bar-mode 0)
 (column-number-mode 1)
 
 (global-display-line-numbers-mode 1)
@@ -66,8 +63,69 @@
 		 (not (local-variable-p 'compile-command))))
 	(project-compile)))
 
+(defun mr/move-lines (arg)
+  "Move the current line, or all lines touched by the active region,
+ARG lines forward (down) or backward (up). Snaps the moved span to
+whole lines and keeps the region selected afterward so repeated calls
+keep dragging the same block.
+
+If a line's start is the region boundary, it's included on a fresh
+selection (so e.g. landing on a closing brace via shift-down still
+pulls that line in), but excluded when repeating this command
+(`last-command'), since otherwise the boundary this command itself
+leaves behind at a line start would get re-absorbed and the block
+would grow by one line on every repeated press."
+  (if (use-region-p)
+	  (let* ((chaining (memq last-command '(mr/move-line-up mr/move-line-down)))
+			 (point-at-end (> (point) (mark)))
+			 (beg (min (point) (mark)))
+			 (end (max (point) (mark))))
+		(goto-char beg)
+		(setq beg (line-beginning-position))
+		(goto-char end)
+		(setq end (if (and (bolp) (> end beg) chaining) end (line-beginning-position 2)))
+		(when (and (< arg 0) (= beg (point-min)))
+		  (user-error "Already at first line"))
+		(when (and (> arg 0) (>= end (point-max)))
+		  (user-error "Already at last line"))
+		(let* ((text (delete-and-extract-region beg end))
+			   (len (length text)))
+		  (goto-char beg)
+		  (forward-line arg)
+		  (let ((new-beg (point)))
+			(insert text)
+			(if point-at-end
+				(progn (set-mark new-beg) (goto-char (+ new-beg len)))
+			  (progn (goto-char new-beg) (set-mark (+ new-beg len)))))
+		  (setq deactivate-mark nil)))
+	(let ((column (current-column)))
+	  (beginning-of-line)
+	  (when (or (> arg 0) (not (bobp)))
+		(forward-line)
+		(when (or (< arg 0) (not (eobp)))
+		  (transpose-lines arg))
+		(forward-line -1))
+	  (move-to-column column))))
+
+(defun mr/move-line-up ()
+  "Move the current line, or the active region's lines, up one line."
+  (interactive "*")
+  (mr/move-lines -1))
+
+(defun mr/move-line-down ()
+  "Move the current line, or the active region's lines, down one line."
+  (interactive "*")
+  (mr/move-lines 1))
+
 (global-set-key (kbd "C-,") 'mr/duplicate-line)
+(global-set-key (kbd "M-<up>") 'mr/move-line-up)
+(global-set-key (kbd "M-<down>") 'mr/move-line-down)
 (global-set-key (kbd "C-x C-k") 'mr/save-and-kill-current-buffer)
 (global-set-key (kbd "<f7>") 'mr/compile-project)
+(global-set-key (kbd "M-o") 'project-find-file)
+(global-set-key (kbd "M-i") 'imenu)
+
+(with-eval-after-load 'dired
+  (keymap-set dired-mode-map "_" 'dired-create-empty-file))
 
 (load-file "~/.config/emacs/pkgs.el")

@@ -16,8 +16,9 @@
  '(kept-new-versions 6)
  '(kept-old-version 2)
  '(package-selected-packages
-   '(cmake-mode counsel counsel-lsp flycheck ido-completing-read+ lsp-ui
-				magit multiple-cursors smex))
+   '(cmake-mode consult consult-eglot go-mode
+				ido-completing-read+ magit multiple-cursors
+				smex vertico yasnippet))
  '(tab-width 4)
  '(version-control t)
  '(visible-bell t))
