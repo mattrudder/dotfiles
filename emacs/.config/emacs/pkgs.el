@@ -22,6 +22,15 @@
 ;  (global-set-key (kbd "M-x") 'smex)
 ;  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
+(use-package xref
+  :custom
+  (xref-search-program 'ripgrep)
+  :config
+  ;; The "-s 10000" xref hardcodes for windows-nt exceeds the ARG_MAX xargs
+  ;; enforces under Git for Windows' bash/MSYS2; pick a value safely under it.
+  (setf (alist-get 'ripgrep xref-search-program-alist)
+        "xargs -0 -s 2000 rg <C> --null -nH --no-heading --no-messages -g '!*/' -e <R>"))
+
 (use-package vertico
   :ensure t
   :init
@@ -68,6 +77,17 @@
   ;; take effect -- not verified against gopls source itself.
   (setq-default eglot-workspace-configuration
                 '(:gopls (:symbolScope "workspace")))
+  :config
+  (defvar-local mr/eglot-format-on-save t
+	"When non-nil, format the buffer via eglot before saving.
+Set to nil (e.g. via a project's .dir-locals.el) to opt out.")
+  (put 'mr/eglot-format-on-save 'safe-local-variable #'booleanp)
+  (defun mr/maybe-eglot-format-buffer ()
+	(when mr/eglot-format-on-save
+	  (eglot-format-buffer)))
+  (add-hook 'eglot-managed-mode-hook
+			(lambda ()
+			  (add-hook 'before-save-hook #'mr/maybe-eglot-format-buffer nil t)))
   :bind (:map eglot-mode-map
 			  ("M-RET" . eglot-code-actions)))
 

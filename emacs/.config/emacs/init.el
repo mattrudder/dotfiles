@@ -12,8 +12,8 @@
 (setq initial-buffer-choice (lambda () (dired default-directory)))
 
 (when (eq system-type 'windows-nt)
-  (setq shell-file-name "C:/Program Files/PowerShell/7/pwsh.exe")
-  (setq shell-command-switch "-Command"))
+  (setq shell-file-name "C:/Program Files/Git/usr/bin/bash.exe")
+  (setq shell-command-switch "-lc"))
 
 (require 'ansi-color)
 (defun mr/colorize-compilation-buffer ()
@@ -57,10 +57,16 @@
 		  (with-current-buffer buf
 			(when (and (buffer-file-name) (buffer-modified-p))
 			  (save-buffer)))))))
-  ;; Run compile, with prompt if compile-command is unset locally
-  (setenv "TERM" "xterm-256color")  
+  ;; Run compile, with prompt only if compile-command is still the factory
+  ;; default -- `compile' itself updates this via a plain (non-local) setq,
+  ;; so comparing against (default-value ...) would always be trivially
+  ;; equal; `standard-value' holds the defcustom's original form regardless
+  ;; of later customization, whether from typing a command once or from a
+  ;; project's .dir-locals.el.
+  (setenv "TERM" "xterm-256color")
   (let ((compilation-read-command
-		 (not (local-variable-p 'compile-command))))
+		 (equal compile-command
+				(eval (car (get 'compile-command 'standard-value))))))
 	(project-compile)))
 
 (defun mr/move-lines (arg)
