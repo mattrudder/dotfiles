@@ -22,6 +22,12 @@
 
 (add-hook 'compilation-filter-hook 'mr/colorize-compilation-buffer)
 
+(add-to-list 'display-buffer-alist
+			 '("\\*compilation\\*"
+			   (display-buffer-reuse-window display-buffer-at-bottom)
+			   (reusable-frames . visible)
+			   (window-height . 0.2)))
+
 (defun mr/duplicate-line ()
   "Duplicates the current line."
   (interactive)
@@ -46,17 +52,27 @@
 	  (save-buffer))
 	(kill-current-buffer)))
 
-(defun mr/compile-project ()
-  "Save project buffers and run compile. Prompt only if no command is set."
-  (interactive)
-  ;; Save all project-related buffers
+(defun mr/compile-project (&optional force-prompt)
+  "Save project buffers and run compile. Prompt only if no command is
+set, unless FORCE-PROMPT (e.g. a prefix arg) is non-nil."
+  (interactive "P")
   (let ((pr (project-current)))
+	;; Save all project-related buffers
 	(when pr
 	  (let ((buffers (project-buffers pr)))
 		(dolist (buf buffers)
 		  (with-current-buffer buf
 			(when (and (buffer-file-name) (buffer-modified-p))
-			  (save-buffer)))))))
+			  (save-buffer))))))
+	;; Some tools (e.g. `go test') report error locations as a bare
+	;; filename with no directory, since each package's test binary runs
+	;; from its own directory. Populate `compilation-search-path' with
+	;; every directory in the project so clicking those errors resolves
+	;; the file directly instead of falling back to a "find file" prompt
+	;; (which becomes a native file-open dialog for a mouse click).
+	(when pr
+	  (setq compilation-search-path
+			(delete-dups (mapcar #'file-name-directory (project-files pr))))))
   ;; Run compile, with prompt only if compile-command is still the factory
   ;; default -- `compile' itself updates this via a plain (non-local) setq,
   ;; so comparing against (default-value ...) would always be trivially
@@ -65,8 +81,9 @@
   ;; project's .dir-locals.el.
   (setenv "TERM" "xterm-256color")
   (let ((compilation-read-command
-		 (equal compile-command
-				(eval (car (get 'compile-command 'standard-value))))))
+		 (or force-prompt
+			 (equal compile-command
+					(eval (car (get 'compile-command 'standard-value)))))))
 	(project-compile)))
 
 (defun mr/move-lines (arg)
@@ -128,6 +145,7 @@ would grow by one line on every repeated press."
 (global-set-key (kbd "M-<down>") 'mr/move-line-down)
 (global-set-key (kbd "C-x C-k") 'mr/save-and-kill-current-buffer)
 (global-set-key (kbd "<f7>") 'mr/compile-project)
+(global-set-key (kbd "<S-f7>") (lambda () (interactive) (mr/compile-project t)))
 (global-set-key (kbd "M-o") 'project-find-file)
 (global-set-key (kbd "M-i") 'imenu)
 
