@@ -89,7 +89,8 @@ Set to nil (e.g. via a project's .dir-locals.el) to opt out.")
 			(lambda ()
 			  (add-hook 'before-save-hook #'mr/maybe-eglot-format-buffer nil t)))
   :bind (:map eglot-mode-map
-			  ("M-RET" . eglot-code-actions)))
+			  ("M-RET" . eglot-code-actions)
+			  ("M-R" . eglot-rename)))
 
 (use-package consult-eglot
   :ensure t

@@ -3,9 +3,39 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (load-file custom-file)
 
-(set-frame-font "Berkeley Mono 13" nil t)
+(defvar mr/frame-font-family "UnifontExMono"
+  "Font family used by `mr/set-frame-font-size'.")
+(defconst mr/frame-font-default-size 18
+  "Point size `mr/reset-frame-font-size' restores.")
+(defvar mr/frame-font-size mr/frame-font-default-size
+  "Current point size used by `mr/set-frame-font-size'.")
+
+(defun mr/set-frame-font-size ()
+  "Apply `mr/frame-font-family' at `mr/frame-font-size' to all frames.
+Always passes an explicit size string to `set-frame-font', rather than
+relying on face-height scaling, since that didn't reliably take effect."
+  (set-frame-font (format "%s %d" mr/frame-font-family mr/frame-font-size)
+				   nil t))
+
+(defun mr/increase-frame-font-size ()
+  (interactive)
+  (setq mr/frame-font-size (1+ mr/frame-font-size))
+  (mr/set-frame-font-size))
+
+(defun mr/decrease-frame-font-size ()
+  (interactive)
+  (setq mr/frame-font-size (max 1 (1- mr/frame-font-size)))
+  (mr/set-frame-font-size))
+
+(defun mr/reset-frame-font-size ()
+  (interactive)
+  (setq mr/frame-font-size mr/frame-font-default-size)
+  (mr/set-frame-font-size))
+
+(mr/set-frame-font-size)
 
 (column-number-mode 1)
+(electric-pair-mode 1)
 
 (global-display-line-numbers-mode 1)
 
@@ -146,8 +176,20 @@ would grow by one line on every repeated press."
 (global-set-key (kbd "C-x C-k") 'mr/save-and-kill-current-buffer)
 (global-set-key (kbd "<f7>") 'mr/compile-project)
 (global-set-key (kbd "<S-f7>") (lambda () (interactive) (mr/compile-project t)))
+(defun mr/project-create-file (path)
+  "Create and visit a new file at PATH, relative to the current
+project's root, creating any missing parent directories along the way."
+  (interactive
+   (list (read-file-name "Create file: " (project-root (project-current t)))))
+  (make-directory (file-name-directory path) t)
+  (find-file path))
+
 (global-set-key (kbd "M-o") 'project-find-file)
+(define-key project-prefix-map "n" 'mr/project-create-file)
 (global-set-key (kbd "M-i") 'imenu)
+(global-set-key (kbd "C-M-=") 'mr/increase-frame-font-size)
+(global-set-key (kbd "C-M--") 'mr/decrease-frame-font-size)
+(global-set-key (kbd "C-M-0") 'mr/reset-frame-font-size)
 
 (with-eval-after-load 'dired
   (keymap-set dired-mode-map "_" 'dired-create-empty-file))

@@ -1,4 +1,5 @@
 elpa/
+transient/
 
 # ignore local settings files
 ido.last
