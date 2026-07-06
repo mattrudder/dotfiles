@@ -35,6 +35,10 @@ export BASE16_DIR="$DOTFILES_DIR/base16"
 # Dotfiles Scripts
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
+# Editor
+export EDITOR="emacs -nw"
+export VISUAL="emacs -nw"
+
 # OS-specific config (includes brew shellenv on macOS)
 if [[ "$OSTYPE" == "darwin"* ]]; then
   source $DOTFILES_DIR/macos/.zshrc

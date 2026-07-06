@@ -54,13 +54,11 @@ l = "!source ~/.githelpers && pretty_git_log"
 la = !git l --all
 sync = "!find . -maxdepth 2 -type d -name .git -execdir git pull \\;"
 lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-pod = push origin develop
 hd = !git head
 br = branch
 
 [core]
 pager = delta
-editor = code -n -w
 excludesfile = ~/.gitignore
 autocrlf = input
 longpaths = true
@@ -73,9 +71,6 @@ rebase = true
 
 [diff]
 tool = default-difftool
-
-[difftool]
-cmd = code --wait --new-window --diff $LOCAL $REMOTE
 
 [filter "lfs"]
 clean = git-lfs clean %f
@@ -97,6 +92,3 @@ defaultBranch = main
 
 [branch]
 autosetuprebase = always
-[safe]
-	directory = D:/3p/zed
-	directory = D:/3p/zig
