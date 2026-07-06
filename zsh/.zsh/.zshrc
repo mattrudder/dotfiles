@@ -36,8 +36,10 @@ export BASE16_DIR="$DOTFILES_DIR/base16"
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # Editor
-export EDITOR="emacs -nw"
-export VISUAL="emacs -nw"
+alias et='emacsclient -t -a ""'
+alias e='emacsclient -n -c -a ""'
+export EDITOR='emacsclient -t -a ""'
+export VISUAL='emacsclient -t -a ""'
 
 # OS-specific config (includes brew shellenv on macOS)
 if [[ "$OSTYPE" == "darwin"* ]]; then
