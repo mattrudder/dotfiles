@@ -3,9 +3,9 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (load-file custom-file)
 
-(defvar mr/frame-font-family "UnifontExMono"
+(defvar mr/frame-font-family "GohuFont 14 Nerd Font"
   "Font family used by `mr/set-frame-font-size'.")
-(defconst mr/frame-font-default-size 18
+(defconst mr/frame-font-default-size 14
   "Point size `mr/reset-frame-font-size' restores.")
 (defvar mr/frame-font-size mr/frame-font-default-size
   "Current point size used by `mr/set-frame-font-size'.")

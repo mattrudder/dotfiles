@@ -76,7 +76,12 @@
   ;; Verify against your gopls version's own settings docs if this doesn't
   ;; take effect -- not verified against gopls source itself.
   (setq-default eglot-workspace-configuration
-                '(:gopls (:symbolScope "workspace")))
+                '(:gopls (
+						  :symbolScope "workspace"
+									   :usePlaceholders t
+									   :staticcheck t
+									   :completeUnimported t
+						  )))
   :config
   (defvar-local mr/eglot-format-on-save t
 	"When non-nil, format the buffer via eglot before saving.
