@@ -5,7 +5,10 @@
 
 (defvar mr/frame-font-family "GohuFont 14 Nerd Font"
   "Font family used by `mr/set-frame-font-size'.")
-(defconst mr/frame-font-default-size 14
+(defconst mr/frame-font-default-size
+  (cond
+   ((eq system-type 'darwin) 18)
+   ((eq system-type 'windows-nt) 14))
   "Point size `mr/reset-frame-font-size' restores.")
 (defvar mr/frame-font-size mr/frame-font-default-size
   "Current point size used by `mr/set-frame-font-size'.")
@@ -44,6 +47,12 @@ relying on face-height scaling, since that didn't reliably take effect."
 (when (eq system-type 'windows-nt)
   (setq shell-file-name "C:/Program Files/Git/usr/bin/bash.exe")
   (setq shell-command-switch "-lc"))
+
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier 'meta)
+  (setq mac-right-command-modifier 'meta)
+  (setq mac-option-modifier 'none)
+  (x-focus-frame nil))
 
 (require 'ansi-color)
 (defun mr/colorize-compilation-buffer ()

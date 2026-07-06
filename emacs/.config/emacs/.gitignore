@@ -9,3 +9,4 @@ projects
 .lsp-session-v1
 .mc-lists.el
 package-quickstart.*
+eln-cache/
