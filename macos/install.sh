@@ -9,9 +9,16 @@ else
     brew update
 fi
 
-brew tap homebrew/cask-fonts
 brew install mise
+
+# Nerd Fonts used by this config
+brew tap homebrew/cask-fonts
 brew install --cask font-gohufont-nerd-font
+
+# Emacs Plus
+brew tap d12frosted/emacs-plus
+brew trust d12frosted/emacs-plus
+brew install --cask emacs-plus-app
 
 source `mise activate bash`
 mise install
