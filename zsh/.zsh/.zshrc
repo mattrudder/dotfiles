@@ -15,7 +15,7 @@ setopt APPEND_HISTORY
 # adds commands as they are typed, not at shell exit
 setopt INC_APPEND_HISTORY
 # expire duplicates first
-setopt HIST_EXPIRE_DUPS_FIRST 
+setopt HIST_EXPIRE_DUPS_FIRST
 # do not store duplications
 setopt HIST_IGNORE_DUPS
 #ignore duplicates when searching
@@ -35,6 +35,21 @@ export BASE16_DIR="$DOTFILES_DIR/base16"
 # Dotfiles Scripts
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
+# OS-specific config (includes brew shellenv on macOS)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  source $DOTFILES_DIR/macos/.zshrc
+elif [[ "$OSTYPE" == "linux"* ]]; then
+  source $DOTFILES_DIR/linux/.zshrc
+fi
+
+# Load completions
+zstyle ':completion:*:*:git:*' script $ZDOTDIR/functions/git-completion.bash
+fpath=($ZDOTDIR/functions $fpath)
+autoload -Uz compinit && compinit
+
+# Local config overlay (private dotfiles repo)
+[[ -f ~/.dotfiles-local/zsh/.zshrc ]] && source ~/.dotfiles-local/zsh/.zshrc
+
 # Mise
 eval "$(mise activate zsh)"
 
@@ -52,24 +67,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
 [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  source $DOTFILES_DIR/macos/.zshrc
-elif [[ "$OSTYPE" == "linux"* ]]; then
-  source $DOTFILES_DIR/linux/.zshrc
-fi
-
 # Base16 Shell
 export CLICOLOR=1
 # BASE16_SHELL="$BASE16_DIR/shell"
 # [ -n "$PS1" ] && \
 #     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
 #         eval "$("$BASE16_SHELL/profile_helper.sh")"
-
-# Load Git completion
-zstyle ':completion:*:*:git:*' script $ZDOTDIR/functions/git-completion.bash
-fpath=($ZDOTDIR/functions $fpath)
-
-autoload -Uz compinit && compinit
 
 eval `dircolors $ZDOTDIR/.dircolors`
 
@@ -85,3 +88,5 @@ alias lt='ls --tree'
 bindkey -s ^f " tmux-sessionizer; fc -R\n"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

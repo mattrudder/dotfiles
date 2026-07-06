@@ -85,6 +85,22 @@ stow $SCRIPT_PATH/alacritty $HOME/.config
 stow $SCRIPT_PATH/kitty $HOME/.config
 # stow $SCRIPT_PATH/starship $HOME/.config
 
+# Setup dotfiles-local overlay symlink
+if [ ! -e "$HOME/.dotfiles-local" ]; then
+  echo ""
+  read -p "Set up a private dotfiles overlay? (y/n) " -n 1 -r
+  echo ""
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    read -p "Path to private dotfiles repo: " overlay_path
+    if [ -d "$overlay_path" ]; then
+      ln -s "$overlay_path" "$HOME/.dotfiles-local"
+      echo "✓ Linked ~/.dotfiles-local -> $overlay_path"
+    else
+      echo "Directory not found: $overlay_path"
+    fi
+  fi
+fi
+
 
 BASE16_DIR="$DOTFILES_DIR/base16"
 mkdir -p "$BASE16_DIR"
