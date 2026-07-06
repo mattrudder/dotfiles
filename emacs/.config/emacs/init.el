@@ -13,12 +13,18 @@
 (defvar mr/frame-font-size mr/frame-font-default-size
   "Current point size used by `mr/set-frame-font-size'.")
 
-(defun mr/set-frame-font-size ()
-  "Apply `mr/frame-font-family' at `mr/frame-font-size' to all frames.
-Always passes an explicit size string to `set-frame-font', rather than
-relying on face-height scaling, since that didn't reliably take effect."
-  (set-frame-font (format "%s %d" mr/frame-font-family mr/frame-font-size)
-				   nil t))
+(defun mr/set-frame-font-size (&optional frame)
+  "Sets `mr/frame-font-family' at `mr/frame-font-size' to the FRAME
+argument.  If FRAME is nil, apply to the selected frame. Always passes
+an explicit size string to `set-frame-font', rather than relying on
+face-height scaling, since that didn't reliably take effect."
+  (interactive)
+  (let ((font-str (format "%s %s" mr/frame-font-family mr/frame-font-size)))
+	(setf (alist-get 'font default-frame-alist) font-str)
+	
+	(when (display-graphic-p frame)
+	  (set-frame-font (format "%s %d" mr/frame-font-family mr/frame-font-size)
+				   nil t))))
 
 (defun mr/increase-frame-font-size ()
   (interactive)
@@ -36,13 +42,25 @@ relying on face-height scaling, since that didn't reliably take effect."
   (mr/set-frame-font-size))
 
 (mr/set-frame-font-size)
+(add-hook 'after-make-frame-functions #'mr/set-frame-font-size)
 
 (column-number-mode 1)
 (electric-pair-mode 1)
 
 (global-display-line-numbers-mode 1)
 
-(setq initial-buffer-choice (lambda () (dired default-directory)))
+;; macOS (NS) renders `visible-bell' as a large caution icon centered on the
+;; frame instead of a window flash, and there's no mac-specific variable to
+;; change that -- only `visible-bell' and `ring-bell-function' exist. Override
+;; the bell on darwin with a subtle mode-line flash (the closest thing to a
+;; flash on NS); Windows/Linux keep their native `visible-bell' window flash.
+(defun mr/flash-mode-line ()
+  "Briefly invert the mode line as a visual bell."
+  (let ((face (if (facep 'mode-line-active) 'mode-line-active 'mode-line)))
+	(invert-face face)
+	(run-with-timer 0.1 nil #'invert-face face)))
+(when (eq system-type 'darwin)
+  (setq ring-bell-function #'mr/flash-mode-line))
 
 (when (eq system-type 'windows-nt)
   (setq shell-file-name "C:/Program Files/Git/usr/bin/bash.exe")
@@ -52,7 +70,20 @@ relying on face-height scaling, since that didn't reliably take effect."
   (setq mac-command-modifier 'meta)
   (setq mac-right-command-modifier 'meta)
   (setq mac-option-modifier 'none)
-  (x-focus-frame nil))
+  (when (display-graphic-p)
+	(x-focus-frame nil)))
+
+(defun my/open-dired-if-empty ()
+  "Open Dired in the current directory if no files were opened."
+  (when (<= (length (buffer-list)) 1) ; Only *scratch* or no buffers exist
+    (dired default-directory)))
+
+;; For standard emacs launch
+(add-hook 'emacs-startup-hook #'my/open-dired-if-empty)
+
+;; For emacsclient launch (every time a new client frame is created)
+(add-hook 'server-after-make-frame-hook #'my/open-dired-if-empty)
+
 
 (require 'ansi-color)
 (defun mr/colorize-compilation-buffer ()
@@ -195,7 +226,6 @@ project's root, creating any missing parent directories along the way."
 
 (global-set-key (kbd "M-o") 'project-find-file)
 (define-key project-prefix-map "n" 'mr/project-create-file)
-(global-set-key (kbd "M-i") 'imenu)
 (global-set-key (kbd "C-M-=") 'mr/increase-frame-font-size)
 (global-set-key (kbd "C-M--") 'mr/decrease-frame-font-size)
 (global-set-key (kbd "C-M-0") 'mr/reset-frame-font-size)
@@ -204,3 +234,4 @@ project's root, creating any missing parent directories along the way."
   (keymap-set dired-mode-map "_" 'dired-create-empty-file))
 
 (load-file "~/.config/emacs/pkgs.el")
+

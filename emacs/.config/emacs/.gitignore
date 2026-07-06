@@ -1,7 +1,5 @@
 elpa/
 transient/
-
-# ignore local settings files
 ido.last
 recentf
 smex-items
@@ -10,3 +8,4 @@ projects
 .mc-lists.el
 package-quickstart.*
 eln-cache/
+tree-sitter/

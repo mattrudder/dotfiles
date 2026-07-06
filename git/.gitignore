@@ -7,8 +7,17 @@
 *.sublime-project
 *.sublime-workspace
 *.rdbg
-.claude/settings.local.json
 
 # Agent Steering Files
 .claude
 CLAUDE.md
+*.iml
+**/.claude/settings.local.json
+
+# Emacs
+# lock files
+.#*
+# backup files
+*~
+# auto-save files
+\#*\#

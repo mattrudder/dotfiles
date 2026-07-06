@@ -40,7 +40,20 @@
   :ensure t
   :custom
   (consult-narrow-key "<")
-  (consult-async-split-style 'semicolon))
+  (consult-async-split-style 'semicolon)
+  :init
+  ;; Route xref result lists through consult's fuzzy, previewable picker instead
+  ;; of the plain *xref* buffer. Covers M-. (go-to-definition when there are
+  ;; multiple hits) and M-? (`xref-find-references' -> all usages). With eglot
+  ;; active these results come from the language server.
+  (setq xref-show-xrefs-function #'consult-xref
+		xref-show-definitions-function #'consult-xref)
+  :bind
+  ;; In-file symbol navigation via eglot document symbols (functions, consts,
+  ;; child components): fuzzy + fzf-ranked + live preview. Best for jumping
+  ;; around inside a large component. M-I widens it to all open buffers.
+  (("M-i" . consult-imenu)
+   ("M-I" . consult-imenu-multi)))
 
 (use-package multiple-cursors
   :ensure t
@@ -67,7 +80,9 @@
 (use-package eglot
   :hook ((c-mode . eglot-ensure)
 		 (c++-mode . eglot-ensure)
-		 (go-mode . eglot-ensure))
+		 (go-mode . eglot-ensure)
+		 (typescript-ts-mode . eglot-ensure)
+		 (tsx-ts-mode . eglot-ensure))
   :custom
   (eglot-events-buffer-size 0)
   :init
@@ -136,5 +151,87 @@ Set to nil (e.g. via a project's .dir-locals.el) to opt out.")
   :ensure t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles . (partial-completion))))))
+  (completion-category-defaults nil))
+
+;; Tree-sitter: install/manage language grammars and route the *-ts-mode major
+;; modes into `auto-mode-alist'. Pins known-good grammar revisions, sidestepping
+;; the ABI-version mismatches you can hit when tracking each grammar's master.
+(use-package treesit-auto
+  :ensure t
+  :custom
+  ;; Offer to compile a missing grammar the first time you visit such a file.
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+;; Prepend the nearest ancestor `node_modules/.bin' to a buffer-local
+;; `exec-path' (and the subprocess PATH) so eglot launches project-local tools
+;; (typescript-language-server, eslint, prettier) instead of a global one.
+;;
+;; This replaces the add-node-modules-path package, which shells out to
+;; `npm bin' -- removed in npm 9+ (errors "Unknown command: bin") -- and has no
+;; usable equivalent under Yarn 4. A pure `locate-dominating-file' lookup needs
+;; no npm/yarn/node on PATH and works from a GUI Emacs that never sourced the
+;; shell. Runs at depth -10 so it precedes `eglot-ensure' on the same hook.
+(defun mr/add-node-modules-bin ()
+  "Add the nearest ancestor `node_modules/.bin' to buffer-local `exec-path'.
+Also prepends it to a buffer-local PATH so spawned processes inherit it."
+  (when-let* ((file (or buffer-file-name default-directory))
+			  (root (locate-dominating-file
+					 file
+					 (lambda (dir)
+					   (file-directory-p (expand-file-name "node_modules/.bin" dir)))))
+			  (bin (expand-file-name "node_modules/.bin" root)))
+	(setq-local exec-path (cons bin (remove bin exec-path)))
+	(setq-local process-environment
+				(cons (concat "PATH=" bin path-separator (getenv "PATH"))
+					  process-environment))))
+
+(dolist (hook '(typescript-ts-mode-hook
+				tsx-ts-mode-hook
+				js-ts-mode-hook))
+  (add-hook hook #'mr/add-node-modules-bin -10))
+
+;; File finding: M-o stays on `project-find-file' (bound in init.el), which
+;; lists the full git file set and filters with orderless. Combined with the
+;; `orderless-component-separator' above, a path-shaped fuzzy query matches
+;; without naming each folder in full. consult-fd was a poor fit here -- it
+;; hands the query to `fd' as a path *regexp* (so `*' is a quantifier, not a
+;; wildcard, and it isn't fuzzy); it remains available via `M-x consult-fd' for
+;; regexp/gitignore-aware searches when that's what you want.
+
+;; typescript-language-server drives tsserver, which on a repo this large
+;; (~26k .ts/.tsx in twilight) can hit its default heap ceiling and turn slow or
+;; unreliable for xref (M-.). Raise tsserver's memory. This entry shadows
+;; eglot's built-in mapping (add-to-list prepends) while keeping program/args;
+;; the binary still resolves per-project via `mr/add-node-modules-bin'.
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+			   '((typescript-ts-mode tsx-ts-mode)
+				 . ("typescript-language-server" "--stdio"
+					:initializationOptions (:maxTsServerMemory 8192)))))
+
+;; Fuzzy matching WITH score-based ranking. orderless only *filters* -- it never
+;; scores, so vertico falls back to sorting survivors by history/length, which
+;; buries a long intended path (e.g. .../channel-live/native/components/metadata/
+;; index.tsx) under shorter loose-flex matches. `fussy' is a completion style
+;; that scores and sorts candidates, floating the best match to the top. It
+;; scores via `fzf-native', a C module whose package ships prebuilt binaries for
+;; macOS/Windows/Linux -- fast enough for twilight's ~33k candidates with no
+;; per-platform compile. fussy becomes the primary style across the board (M-o
+;; project files, M-x, buffers, ...), superseding the earlier orderless
+;; flex/separator tweaks. It applies to every completion category, including
+;; `file'/`find-file' (the earlier partial-completion carve-out was dropped, per
+;; preference for fzf everywhere). orderless stays installed as a fallback.
+(use-package fzf-native
+  :ensure t
+  :config
+  (fzf-native-load-dyn))
+
+(use-package fussy
+  :ensure t
+  :after fzf-native
+  :config
+  ;; Uses fzf-native for both filtering and (batch) scoring/sorting.
+  (fussy-setup-fzf))

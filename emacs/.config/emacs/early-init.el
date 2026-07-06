@@ -24,3 +24,57 @@
 ;; Don't pop up *Warnings* for async native-comp noise mid-session
 (setq native-comp-async-report-warnings nil)
 
+
+;; GUI Emacs.app on macOS doesn't inherit the shell's environment, so
+;; LIBRARY_PATH is unset and libgccjit's driver can't find Homebrew gcc's
+;; runtime libs (e.g. libemutls_w.a) at link time -- native compilation then
+;; fails with "error invoking gcc driver". Point it at gcc's lib dirs. The
+;; wildcard picks up the arch/version subdir (.../gcc/<triple>/<ver>/), so this
+;; keeps working across `brew upgrade gcc' version bumps.
+(when (and (eq system-type 'darwin)
+		   (fboundp 'native-comp-available-p)
+		   (native-comp-available-p))
+  (let* ((gcc-lib "/opt/homebrew/lib/gcc/current")
+		 (nested (car (file-expand-wildcards (expand-file-name "gcc/*/*" gcc-lib))))
+		 (dirs (delq nil (list gcc-lib nested (getenv "LIBRARY_PATH")))))
+	(when (file-directory-p gcc-lib)
+	  (setenv "LIBRARY_PATH" (mapconcat #'identity dirs ":")))))
+
+;; Make Emacs self-sufficient for locating external tools, regardless of how it
+;; was started. A shell-spawned daemon inherits the interactive shell's PATH,
+;; but a launchd/Finder/service-launched Emacs gets only the bare path_helper
+;; PATH (no mise, no Homebrew). Prepend known tool dirs so both cases work.
+;;
+;; Cross-platform (this config is shared with Windows and Linux):
+;;   - Every entry is guarded by `file-directory-p', so absent dirs are no-ops.
+;;   - mise's shims dir differs by OS (Unix: ~/.local/share/mise/shims;
+;;     Windows: %LOCALAPPDATA%\\mise\\shims); both are listed and only the
+;;     running platform's own path will exist.
+;;   - `path-separator' is \";\" on Windows, \":\" elsewhere.
+;;   - Homebrew is darwin-only.
+;;
+;; Precedence: entries are prepended, so the LAST one processed ends up first
+;; on PATH. mise shims are processed last -> they win, giving the correct
+;; per-project tool version (e.g. node 22.x pinned in a repo) over anything in
+;; Homebrew or the inherited PATH. eglot-spawned servers (whose
+;; `#!/usr/bin/env node' shebang needs node) then resolve correctly.
+(defun mr/prepend-exec-path (dir)
+  "If DIR exists, prepend it to `exec-path' and the PATH environment variable."
+  (when (and dir (file-directory-p dir))
+	(add-to-list 'exec-path dir)
+	(setenv "PATH" (concat dir path-separator (getenv "PATH")))))
+
+(dolist (dir (append
+			  ;; Lowest precedence first (Homebrew, darwin only).
+			  (when (eq system-type 'darwin)
+				'("/opt/homebrew/sbin" "/opt/homebrew/bin"))
+			  ;; Highest precedence last: mise shims (per-project tool versions).
+			  ;; Unix/macOS layout:
+			  (list (expand-file-name "~/.local/share/mise/shims"))
+			  ;; Windows layout: %LOCALAPPDATA%\mise\shims (mise's default data dir).
+			  (when (eq system-type 'windows-nt)
+				(list (expand-file-name
+					   "mise/shims"
+					   (or (getenv "LOCALAPPDATA")
+						   (expand-file-name "~/AppData/Local")))))))
+  (mr/prepend-exec-path dir))
