@@ -8,7 +8,7 @@
 (defconst mr/frame-font-default-size
   (cond
    ((eq system-type 'darwin) 18)
-   ((eq system-type 'windows-nt) 12))
+   (t 12))
   "Point size `mr/reset-frame-font-size' restores.")
 (defvar mr/frame-font-size mr/frame-font-default-size
   "Current point size used by `mr/set-frame-font-size'.")
