@@ -79,6 +79,7 @@ stow $SCRIPT_PATH/wezterm $HOME
 stow $SCRIPT_PATH/starship $HOME
 stow $SCRIPT_PATH/mise $HOME
 stow $SCRIPT_PATH/emacs $HOME
+stow $SCRIPT_PATH/ghostty $HOME
 
 stow $SCRIPT_PATH/nvim $HOME/.config
 stow $SCRIPT_PATH/alacritty $HOME/.config
