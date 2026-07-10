@@ -236,6 +236,12 @@ project's root, creating any missing parent directories along the way."
 
 (global-set-key (kbd "M-o") 'project-find-file)
 (define-key project-prefix-map "n" 'mr/project-create-file)
+
+(defun mr/reload-init-file ()
+  "Reload init.el."
+  (interactive)
+  (load-file user-init-file))
+(global-set-key (kbd "C-c r") 'mr/reload-init-file)
 (global-set-key (kbd "C-M-=") 'mr/increase-frame-font-size)
 (global-set-key (kbd "C-M--") 'mr/decrease-frame-font-size)
 (global-set-key (kbd "C-M-0") 'mr/reset-frame-font-size)
