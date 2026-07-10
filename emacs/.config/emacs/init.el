@@ -14,17 +14,14 @@
   "Current point size used by `mr/set-frame-font-size'.")
 
 (defun mr/set-frame-font-size (&optional frame)
-  "Sets `mr/frame-font-family' at `mr/frame-font-size' to the FRAME
-argument.  If FRAME is nil, apply to the selected frame. Always passes
-an explicit size string to `set-frame-font', rather than relying on
-face-height scaling, since that didn't reliably take effect."
+  "Set `mr/frame-font-family' at `mr/frame-font-size' on FRAME (or the
+selected frame). Applies per-frame only; never t/all-frames (that resizes
+every frame at once and crashes niri under XWayland)."
   (interactive)
-  (let ((font-str (format "%s %s" mr/frame-font-family mr/frame-font-size)))
+  (let ((font-str (format "%s %d" mr/frame-font-family mr/frame-font-size)))
 	(setf (alist-get 'font default-frame-alist) font-str)
-	
 	(when (display-graphic-p frame)
-	  (set-frame-font (format "%s %d" mr/frame-font-family mr/frame-font-size)
-				   nil t))))
+	  (set-frame-font font-str nil (list (or frame (selected-frame)))))))
 
 (defun mr/increase-frame-font-size ()
   (interactive)
@@ -43,6 +40,12 @@ face-height scaling, since that didn't reliably take effect."
 
 (mr/set-frame-font-size)
 (add-hook 'after-make-frame-functions #'mr/set-frame-font-size)
+
+;; Re-assert the font after the daemon's first client frame is realized;
+;; applying it during frame creation lands on a tiny fallback font.
+(add-hook 'server-after-make-frame-hook
+		  (lambda ()
+			(run-at-time 0 nil #'mr/set-frame-font-size (selected-frame))))
 
 (column-number-mode 1)
 (electric-pair-mode 1)
