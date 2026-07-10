@@ -74,13 +74,39 @@
 (use-package cmake-mode
   :ensure t)
 
+;; c-ts-mode-indent-offset defaults to 2; c++-ts-mode is derived from
+;; c-ts-mode and shares this same variable, so one setting covers both.
+(use-package c-ts-mode
+  :custom
+  (c-ts-mode-indent-offset 4)
+  (c-ts-mode-indent-style 'bsd))
+
 (use-package go-mode
   :ensure t)
+
+;; go-ts-mode-indent-offset defaults to 8 (Go's C-derived convention);
+;; override to match our global `tab-width' of 4.
+(use-package go-ts-mode
+  :custom
+  (go-ts-mode-indent-offset 4))
+
+;; go-mode.el registers a `go-test' compilation-error-regexp so `go test'
+;; output (indented "file.go:42: message" lines) is navigable with n/p in
+;; *compilation* buffers, but only as a side effect of the `go-mode'
+;; function body -- which never runs since treesit-auto routes .go files
+;; to `go-ts-mode'. Register it ourselves so it applies regardless of mode.
+(with-eval-after-load 'compile
+  (add-to-list 'compilation-error-regexp-alist 'go-test)
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(go-test . ("^\\s-+\\([^()\t\n]+\\):\\([0-9]+\\):? .*$" 1 2)) t))
 
 (use-package eglot
   :hook ((c-mode . eglot-ensure)
 		 (c++-mode . eglot-ensure)
 		 (go-mode . eglot-ensure)
+		 (c-ts-mode . eglot-ensure)
+		 (c++-ts-mode . eglot-ensure)
+		 (go-ts-mode . eglot-ensure)
 		 (typescript-ts-mode . eglot-ensure)
 		 (tsx-ts-mode . eglot-ensure))
   :custom
@@ -152,6 +178,17 @@ Set to nil (e.g. via a project's .dir-locals.el) to opt out.")
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil))
+
+;; treesit-auto only pins a subset of grammars to an ABI14-compatible
+;; revision (e.g. go/gomod); for the rest it tracks each repo's default
+;; branch, which for these three has moved on to ABI15 -- newer than what
+;; Emacs's bundled libtree-sitter supports (13-14, per
+;; `treesit-library-abi-version'). Our own entries take priority over
+;; treesit-auto's, since `treesit-auto--build-treesit-source-alist' appends
+;; its generated recipes after whatever is already in this alist.
+(setq treesit-language-source-alist
+      '((c "https://github.com/tree-sitter/tree-sitter-c" "v0.23.6")
+        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp" "v0.23.1")))
 
 ;; Tree-sitter: install/manage language grammars and route the *-ts-mode major
 ;; modes into `auto-mode-alist'. Pins known-good grammar revisions, sidestepping

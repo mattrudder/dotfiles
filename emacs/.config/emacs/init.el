@@ -3,12 +3,12 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (load-file custom-file)
 
-(defvar mr/frame-font-family "GohuFont 14 Nerd Font"
+(defvar mr/frame-font-family "0xProto Nerd Font Propo"
   "Font family used by `mr/set-frame-font-size'.")
 (defconst mr/frame-font-default-size
   (cond
    ((eq system-type 'darwin) 18)
-   ((eq system-type 'windows-nt) 14))
+   ((eq system-type 'windows-nt) 12))
   "Point size `mr/reset-frame-font-size' restores.")
 (defvar mr/frame-font-size mr/frame-font-default-size
   "Current point size used by `mr/set-frame-font-size'.")
@@ -220,7 +220,14 @@ would grow by one line on every repeated press."
   "Create and visit a new file at PATH, relative to the current
 project's root, creating any missing parent directories along the way."
   (interactive
-   (list (read-file-name "Create file: " (project-root (project-current t)))))
+   ;; `fussy-setup' overrides the `file' completion category to fuzzy-match
+   ;; (pkgs.el), so a freshly typed path can fuzzy-match an existing file and
+   ;; RET (`vertico-exit') silently opens that instead of creating PATH.
+   ;; Disable fuzzy matching for just this prompt so what you type is what
+   ;; you get; M-o/find-file elsewhere keep fuzzy matching.
+   (list (let ((completion-styles '(basic partial-completion))
+               (completion-category-overrides nil))
+           (read-file-name "Create file: " (project-root (project-current t))))))
   (make-directory (file-name-directory path) t)
   (find-file path))
 
