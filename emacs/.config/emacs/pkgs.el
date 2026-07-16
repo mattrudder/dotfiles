@@ -230,9 +230,9 @@ Also prepends it to a buffer-local PATH so spawned processes inherit it."
 				js-ts-mode-hook))
   (add-hook hook #'mr/add-node-modules-bin -10))
 
-;; File finding: M-o stays on `project-find-file' (bound in init.el), which
-;; lists the full git file set and filters with orderless. Combined with the
-;; `orderless-component-separator' above, a path-shaped fuzzy query matches
+;; File finding: M-o is bound (in init.el) to `consult-projectile-find-file',
+;; which lists the project's git file set through consult (live preview) and
+;; ranks it with fussy/fzf-native. A path-shaped fuzzy query still matches
 ;; without naming each folder in full. consult-fd was a poor fit here -- it
 ;; hands the query to `fd' as a path *regexp* (so `*' is a quantifier, not a
 ;; wildcard, and it isn't fuzzy); it remains available via `M-x consult-fd' for
@@ -272,3 +272,41 @@ Also prepends it to a buffer-local PATH so spawned processes inherit it."
   :config
   ;; Uses fzf-native for both filtering and (batch) scoring/sorting.
   (fussy-setup-fzf))
+
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :custom
+  ;; Route projectile's own pickers through `completing-read' so Vertico +
+  ;; orderless/fussy render and rank them, same as everything else.
+  (projectile-completion-system 'default)
+  ;; Build the file list from git/fd rather than projectile's own directory
+  ;; walk: fast, and respects .gitignore -- matching how project-find-file
+  ;; behaved before.
+  (projectile-indexing-method 'alien)
+  (projectile-enable-caching t)
+  ;; For CMake projects, read CMakePresets.json and prompt (via Vertico) to
+  ;; pick a build preset on compile -- `cmake --build --preset <name>' --
+  ;; instead of the manual `cmake --build build'. Falls back to the manual
+  ;; command when no presets file is present. Off by projectile's default.
+  (projectile-enable-cmake-presets t)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
+
+;; File-finding / project-switching through consult: live preview + fussy
+;; scoring, consistent with the rest of the search UI. `consult-projectile-find-file'
+;; is bound to M-o (init.el); the unified `consult-projectile' (switch project /
+;; find file / recent in one prompt) is available via M-x, or bind it if you
+;; end up reaching for it often.
+(use-package consult-projectile
+  :ensure t
+  :after (consult projectile))
+
+;; Make consult's notion of "the current project" match projectile's, so
+;; consult-ripgrep / consult-line / consult-project-buffer all scope to the same
+;; root projectile switched into (instead of project.el's independent guess).
+(with-eval-after-load 'consult
+  (setq consult-project-function
+        (lambda (_may-prompt) (projectile-project-root))))

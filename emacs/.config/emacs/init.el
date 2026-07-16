@@ -125,39 +125,28 @@ every frame at once and crashes niri under XWayland)."
 	  (save-buffer))
 	(kill-current-buffer)))
 
-(defun mr/compile-project (&optional force-prompt)
-  "Save project buffers and run compile. Prompt only if no command is
-set, unless FORCE-PROMPT (e.g. a prefix arg) is non-nil."
-  (interactive "P")
-  (let ((pr (project-current)))
-	;; Save all project-related buffers
-	(when pr
-	  (let ((buffers (project-buffers pr)))
-		(dolist (buf buffers)
-		  (with-current-buffer buf
-			(when (and (buffer-file-name) (buffer-modified-p))
-			  (save-buffer))))))
-	;; Some tools (e.g. `go test') report error locations as a bare
-	;; filename with no directory, since each package's test binary runs
-	;; from its own directory. Populate `compilation-search-path' with
-	;; every directory in the project so clicking those errors resolves
-	;; the file directly instead of falling back to a "find file" prompt
-	;; (which becomes a native file-open dialog for a mouse click).
-	(when pr
-	  (setq compilation-search-path
-			(delete-dups (mapcar #'file-name-directory (project-files pr))))))
-  ;; Run compile, with prompt only if compile-command is still the factory
-  ;; default -- `compile' itself updates this via a plain (non-local) setq,
-  ;; so comparing against (default-value ...) would always be trivially
-  ;; equal; `standard-value' holds the defcustom's original form regardless
-  ;; of later customization, whether from typing a command once or from a
-  ;; project's .dir-locals.el.
-  (setenv "TERM" "xterm-256color")
-  (let ((compilation-read-command
-		 (or force-prompt
-			 (equal compile-command
-					(eval (car (get 'compile-command 'standard-value)))))))
-	(project-compile)))
+;; Compilation is driven by stock projectile commands (bound to F7/S-F7
+;; below); these two globals carry over the only behaviors the old
+;; `mr/compile-project' wrapper still added, now applied to *every*
+;; compilation rather than just that one command.
+
+;; `go test' and similar report error locations as bare filenames (each
+;; package's test binary runs from its own directory). Let the *compilation*
+;; buffer resolve those against any directory in the current project, so
+;; next-error / clicks land on the right file. Set buffer-local to each
+;; compilation, so it costs nothing outside a project.
+(defun mr/compilation-project-search-path (_proc)
+  (when-let* ((root (projectile-project-root)))
+    (setq-local compilation-search-path
+                (delete-dups
+                 (mapcar (lambda (f) (file-name-directory (expand-file-name f root)))
+                         (projectile-current-project-files))))))
+(add-hook 'compilation-start-hook #'mr/compilation-project-search-path)
+
+;; Give compilation subprocesses a color-capable TERM (the *compilation*
+;; buffer is ANSI-colorized via `mr/colorize-compilation-buffer'). This is
+;; the built-in per-compilation env knob, replacing an ad-hoc `setenv'.
+(setq compilation-environment '("TERM=xterm-256color"))
 
 (defun mr/move-lines (arg)
   "Move the current line, or all lines touched by the active region,
@@ -217,8 +206,13 @@ would grow by one line on every repeated press."
 (global-set-key (kbd "M-<up>") 'mr/move-line-up)
 (global-set-key (kbd "M-<down>") 'mr/move-line-down)
 (global-set-key (kbd "C-x C-k") 'mr/save-and-kill-current-buffer)
-(global-set-key (kbd "<f7>") 'mr/compile-project)
-(global-set-key (kbd "<S-f7>") (lambda () (interactive) (mr/compile-project t)))
+;; F7 repeats the project's last command (compile/test/run); S-F7 starts a
+;; fresh project compile -- which, for a CMake project with
+;; `projectile-enable-cmake-presets', is the build-preset picker. Both are
+;; stock projectile commands (also on C-c p C and C-c p c). On a project with
+;; no history yet, F7 errors "No command has been run yet" -- press S-F7 once.
+(global-set-key (kbd "<f7>") 'projectile-repeat-last-command)
+(global-set-key (kbd "<S-f7>") 'projectile-compile-project)
 (defun mr/project-create-file (path)
   "Create and visit a new file at PATH, relative to the current
 project's root, creating any missing parent directories along the way."
@@ -230,12 +224,16 @@ project's root, creating any missing parent directories along the way."
    ;; you get; M-o/find-file elsewhere keep fuzzy matching.
    (list (let ((completion-styles '(basic partial-completion))
                (completion-category-overrides nil))
-           (read-file-name "Create file: " (project-root (project-current t))))))
+           (read-file-name "Create file: " (projectile-acquire-root)))))
   (make-directory (file-name-directory path) t)
   (find-file path))
 
-(global-set-key (kbd "M-o") 'project-find-file)
-(define-key project-prefix-map "n" 'mr/project-create-file)
+(global-set-key (kbd "M-o") 'consult-projectile-find-file)
+;; projectile-command-map only exists once projectile has loaded (pkgs.el, at
+;; the end of init.el), so defer the binding until then. Puts create-file on
+;; `C-c p n' / `s-p n', alongside the rest of projectile's project commands.
+(with-eval-after-load 'projectile
+  (define-key projectile-command-map "n" 'mr/project-create-file))
 
 (defun mr/reload-init-file ()
   "Reload init.el."
@@ -248,6 +246,8 @@ project's root, creating any missing parent directories along the way."
 
 (with-eval-after-load 'dired
   (keymap-set dired-mode-map "_" 'dired-create-empty-file))
+
+(require 'org)
 
 (load-file "~/.config/emacs/pkgs.el")
 
