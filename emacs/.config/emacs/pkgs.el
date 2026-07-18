@@ -63,7 +63,14 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
   (global-set-key (kbd "C-\"") 'mc/skip-to-next-like-this)
-  (global-set-key (kbd "C-:") 'mc/skip-to-previous-like-this))
+  (global-set-key (kbd "C-:") 'mc/skip-to-previous-like-this)
+  ;; Copy each cursor's own line instead of prompting once and only
+  ;; copying the last cursor's line (or, worse, running it once for all).
+  (add-to-list 'mc/cmds-to-run-for-all 'mr/copy-line)
+  ;; These replace kill-word/backward-kill-word, which are in mc's default
+  ;; run-for-all list; carry that over so each cursor deletes its own word.
+  (add-to-list 'mc/cmds-to-run-for-all 'mr/delete-word)
+  (add-to-list 'mc/cmds-to-run-for-all 'mr/backward-delete-word))
 
 (use-package yasnippet
   :ensure t

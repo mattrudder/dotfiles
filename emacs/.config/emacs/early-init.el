@@ -78,3 +78,55 @@
 					   (or (getenv "LOCALAPPDATA")
 						   (expand-file-name "~/AppData/Local")))))))
   (mr/prepend-exec-path dir))
+
+;; Emacs on Windows never inherits the MSVC "Developer Command Prompt"
+;; environment (INCLUDE/LIB/LIBPATH, plus PATH entries for cl.exe/link.exe)
+;; that `vcvarsall.bat' sets up, since nothing runs it before Emacs starts.
+;; Capture it once per session so every subprocess (compile, eglot, etc.)
+;; gets a working MSVC toolchain.
+;;
+;; vswhere.exe's location is stable across VS versions/editions/reinstalls
+;; (it lives under the VS Installer, not inside any specific VS instance),
+;; so this keeps working without hardcoding a versioned VS path.
+(defun mr/msvc-dev-environment ()
+  "Return the environment `vcvarsall.bat x64' produces, as an alist.
+Returns nil if a Visual Studio C++ toolset isn't found."
+  (let* ((vswhere "C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe")
+		 (install-path
+		  (and (file-exists-p vswhere)
+			   (with-temp-buffer
+				 (when (zerop (call-process vswhere nil t nil
+											 "-latest" "-prerelease" "-products" "*"
+											 "-requires" "Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+											 "-property" "installationPath"))
+				   (string-trim (buffer-string))))))
+		 (vcvarsall (and install-path (not (string-empty-p install-path))
+						 (expand-file-name "VC/Auxiliary/Build/vcvarsall.bat" install-path))))
+	(when (and vcvarsall (file-exists-p vcvarsall))
+	  ;; `cmd /c "call \"...\" && set"' hits cmd's undocumented quote-stripping
+	  ;; rules for its trailing command-string argument and mangles the path.
+	  ;; Writing the same two lines to a real .bat and running that directly
+	  ;; sidesteps it entirely -- Emacs's w32 process code already knows how
+	  ;; to invoke .bat/.cmd files via cmd.exe correctly.
+	  (let ((script (make-temp-file "mr-vcvars" nil ".bat")))
+		(unwind-protect
+			(progn
+			  (with-temp-file script
+				(insert "@echo off\r\n"
+						(format "call \"%s\" x64\r\n" vcvarsall)
+						"set\r\n"))
+			  (with-temp-buffer
+				(call-process script nil t nil)
+				(goto-char (point-min))
+				(let (env)
+				  (while (re-search-forward "^\\([A-Za-z_][^=\r\n]*\\)=\\(.*\\)$" nil t)
+					(push (cons (match-string 1) (string-trim (match-string 2))) env))
+				  env)))
+		  (delete-file script))))))
+
+(when (eq system-type 'windows-nt)
+  (when-let* ((env (mr/msvc-dev-environment)))
+	(dolist (pair env)
+	  (setenv (car pair) (cdr pair)))
+	(when-let* ((path (getenv "PATH")))
+	  (setq exec-path (append (split-string path path-separator t) (list exec-directory))))))

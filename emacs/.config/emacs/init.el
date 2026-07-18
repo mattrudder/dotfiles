@@ -113,6 +113,27 @@ every frame at once and crashes niri under XWayland)."
 	(move-beginning-of-line 1)
 	(forward-char column)))
 
+(defun mr/copy-line ()
+  "Copy the current line to the kill ring, the same way `kill-ring-save'
+copies an active region. Never moves point or modifies the buffer, so
+there's no cursor state to restore. Registered with `multiple-cursors'
+in pkgs.el to run once per cursor, so each cursor copies its own line."
+  (interactive)
+  (kill-ring-save (line-beginning-position) (line-beginning-position 2)))
+
+(defun mr/delete-word (arg)
+  "Delete ARG words forward, like `kill-word', but via `delete-region' so
+the deleted text never touches the kill ring or system clipboard."
+  (interactive "p")
+  (delete-region (point) (progn (forward-word arg) (point))))
+
+(defun mr/backward-delete-word (arg)
+  "Delete ARG words backward, like `backward-kill-word', but via
+`delete-region' so the deleted text never touches the kill ring or
+system clipboard."
+  (interactive "p")
+  (mr/delete-word (- arg)))
+
 (defun mr/save-and-kill-current-buffer ()
   "Saves the current buffer if modified, then kill it."
   (interactive)
@@ -203,6 +224,9 @@ would grow by one line on every repeated press."
   (mr/move-lines 1))
 
 (global-set-key (kbd "C-,") 'mr/duplicate-line)
+(global-set-key (kbd "C-M-,") 'mr/copy-line)
+(global-set-key (kbd "C-<backspace>") 'mr/backward-delete-word)
+(global-set-key (kbd "C-<delete>") 'mr/delete-word)
 (global-set-key (kbd "M-<up>") 'mr/move-line-up)
 (global-set-key (kbd "M-<down>") 'mr/move-line-down)
 (global-set-key (kbd "C-x C-k") 'mr/save-and-kill-current-buffer)
