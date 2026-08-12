@@ -1,0 +1,7 @@
+#!/bin/sh
+# omnivoice CLI shim for bash/sh. Stowed to ~/.local/bin by rstow.
+#
+# Bash ignores PATHEXT, so omnivoice.cmd beside this one is invisible here --
+# hence two shims. Points at the stowed script, so no machine paths live here.
+exec pwsh -NoProfile -ExecutionPolicy Bypass \
+  -File "$HOME/.local/share/omnivoice/omnivoice-service.ps1" "$@"

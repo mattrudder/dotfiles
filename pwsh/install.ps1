@@ -73,14 +73,52 @@ rstow -s $PSScriptRoot/../nvim -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../alacritty -t $Env:LOCALAPPDATA
 rstow -s $PSScriptRoot/../mise -t $HOME
 rstow -s $PSScriptRoot/../emacs -t $HOME
+rstow -s $PSScriptRoot/../omnivoice -t $HOME
+rstow -s $PSScriptRoot/../vox -t $HOME
 
-# Add local bin to path
-$newPath = "$env:USERPROFILE\.local\bin"
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if ($userPath -notlike "*$newPath*") {
-    $updatedPath = "$userPath;$newPath"
-    [Environment]::SetEnvironmentVariable("Path", $updatedPath, "User")
+# The private half: things that must not be in a public repo. Same layout, same
+# tool. Warns rather than skipping quietly -- without it omnivoice-server has no
+# voices config and refuses to start.
+$private = "$PSScriptRoot/../../dotfiles-private"
+if (Test-Path $private) {
+    foreach ($pkg in Get-ChildItem -Path $private -Directory) {
+        rstow -s $pkg.FullName -t $HOME
+    }
 }
+else {
+    Write-Warning ("dotfiles-private is not cloned at $private, so ~/.config/omnivoice " +
+        "will be missing and omnivoice-server will refuse to start. " +
+        "git clone git@github.com:mattrudder/dotfiles-private.git $private")
+}
+
+# --- User PATH entries -------------------------------------------------------
+#
+# Order matters, not just presence: ~/.cargo/bin must come AFTER the mise shims,
+# or a stale `cargo install` binary silently wins over mise's pinned version.
+function Set-UserPathEntry {
+    param(
+        [Parameter(Mandatory)][string]$Entry,
+        # Regex for an entry this one must never precede. Omit when order is free.
+        [string]$MustFollow
+    )
+    $current = [Environment]::GetEnvironmentVariable("Path", "User")
+    $parts = @(($current -split ';') | Where-Object { $_ })
+    $entryAt = [Array]::FindIndex($parts, [Predicate[string]] { $args[0].TrimEnd('\') -ieq $Entry.TrimEnd('\') })
+    $afterAt = if ($MustFollow) { [Array]::FindIndex($parts, [Predicate[string]] { $args[0] -match $MustFollow }) } else { -1 }
+
+    # Present and correctly ordered: don't rewrite the PATH for nothing.
+    if ($entryAt -ge 0 -and ($afterAt -lt 0 -or $entryAt -gt $afterAt)) { return }
+
+    if ($entryAt -ge 0) {
+        Write-Host "install: moving $Entry below the mise shims on PATH"
+        $parts = @($parts[0..($parts.Count - 1)] | Where-Object { $_ -ne $parts[$entryAt] })
+    }
+    [Environment]::SetEnvironmentVariable("Path", (($parts + $Entry) -join ';'), "User")
+}
+
+Set-UserPathEntry -Entry "$env:USERPROFILE\.local\bin"
+# The regex matches mise's shim dir on Windows and elsewhere.
+Set-UserPathEntry -Entry "$env:USERPROFILE\.cargo\bin" -MustFollow 'mise[\\/]shims'
 
 # New-Item -ItemType Directory -Path $Env:LOCALAPPDATA\nvim-data\site\autoload -Force | Out-Null
 # $uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'

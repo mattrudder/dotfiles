@@ -1,0 +1,8 @@
+#!/bin/sh
+# vox CLI shim for bash/sh. Stowed to ~/.local/bin by rstow.
+#
+# Exists so `vox note "..."` -- what vox's own steering tells agents to run --
+# actually resolves; vox lives in a venv that is not on PATH. The companion
+# vox.cmd serves cmd/pwsh, which bash cannot see because it ignores PATHEXT.
+VOX_HOME="${VOX_HOME:-D:/jade-nova/vox}"
+exec "$VOX_HOME/.venv/Scripts/vox.exe" "$@"
