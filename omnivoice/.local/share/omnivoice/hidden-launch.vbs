@@ -7,10 +7,20 @@
 '
 ' Args: the program to run, then its arguments. Anything containing a space is
 ' re-quoted, since Run() takes a single string.
+'
+' Every launch appends to %LOCALAPPDATA%\omnivoice\launcher.log. Nothing
+' downstream has a console, so without this line a shortcut that fired and died
+' is indistinguishable from one that never fired -- which is exactly the
+' question a missing tray icon asks, and it cost a session of forensics to not
+' be able to answer it. Read alongside tray.log:
+'
+'   line here + line there  -> it started; tray.log says how it ended
+'   line here, none there   -> pwsh never got going (path, policy, AV)
+'   neither line            -> Explorer or Task Scheduler never ran us
 
 Option Explicit
 
-Dim shell, i, arg, commandLine
+Dim shell, fso, i, arg, commandLine
 Set shell = CreateObject("WScript.Shell")
 
 If WScript.Arguments.Count = 0 Then
@@ -27,5 +37,35 @@ For i = 0 To WScript.Arguments.Count - 1
   commandLine = commandLine & arg
 Next
 
+LogLine "launching: " & commandLine
+
 ' 0 = hidden, False = do not wait; the supervisor runs forever.
 shell.Run commandLine, 0, False
+
+Sub LogLine(text)
+  ' Logging must never be the reason a launch fails, so every error here is
+  ' swallowed. Error handling in VBScript is per-procedure, so this does not
+  ' leak into the Run() above.
+  On Error Resume Next
+  Dim dir, f
+  Set fso = CreateObject("Scripting.FileSystemObject")
+  dir = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\omnivoice"
+  If Not fso.FolderExists(dir) Then fso.CreateFolder dir
+  ' 8 = append, True = create if missing.
+  Set f = fso.OpenTextFile(dir & "\launcher.log", 8, True)
+  f.WriteLine Stamp() & " " & text
+  f.Close
+End Sub
+
+' Match the ISO-ish stamps the PowerShell logs use (Get-Date -Format s), so the
+' three files can be read together. VBScript's Now is locale-formatted.
+Function Stamp()
+  Dim n
+  n = Now
+  Stamp = Year(n) & "-" & Pad(Month(n)) & "-" & Pad(Day(n)) & "T" & _
+          Pad(Hour(n)) & ":" & Pad(Minute(n)) & ":" & Pad(Second(n))
+End Function
+
+Function Pad(v)
+  Pad = Right("0" & v, 2)
+End Function

@@ -77,12 +77,23 @@ $ErrorActionPreference = 'Stop'
 
 $TaskName = 'omnivoice-server'
 $ScriptPath = $PSCommandPath
+# The tray is a separate process with a separate autostart mechanism (a Startup
+# shortcut, not the task). It used to be installed only by hand, which meant a
+# machine could have the server supervised and no tray at all with nothing
+# reporting the difference -- so install/uninstall/status all cover it now.
+$TrayScript = Join-Path $PSScriptRoot 'omnivoice-tray.ps1'
+$Launcher = Join-Path $PSScriptRoot 'hidden-launch.vbs'
 # Resolved every run so a later `cargo install` is picked up. Probed by
 # path, not PATH: the task runs -NoProfile with the User environment.
+# Shims are skipped deliberately. mise (and asdf, and rtx) put a launcher .exe
+# of the same name on PATH ahead of ~\.cargo\bin; it is a real file that runs
+# the server, but its image path is NOT the server's. Resolve to one and every
+# "is that process mine?" test below answers no about the running server.
+$onPath = @(Get-Command 'omnivoice-server' -CommandType Application -All -ErrorAction SilentlyContinue |
+    Select-Object -ExpandProperty Source | Where-Object { $_ -notlike '*\shims\*' })
 $candidates = @(
-    (Get-Command 'omnivoice-server' -CommandType Application -ErrorAction SilentlyContinue |
-        Select-Object -First 1 -ExpandProperty Source),
-    (Join-Path $HOME '.cargo\bin\omnivoice-server.exe'),
+    $onPath
+    (Join-Path $HOME '.cargo\bin\omnivoice-server.exe')
     (Join-Path $RepoRoot 'target\release\omnivoice-server.exe')
 ) | Where-Object { $_ }
 $ServerExe = $candidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
@@ -129,10 +140,82 @@ function Get-SupervisorProcess {
         }
 }
 
+function Get-TrayProcess {
+    # Same discipline as Get-SupervisorProcess, and for the same scar: a match
+    # on "command line mentions the script" also matches the shell TALKING
+    # about it, including this one. Never self; and the three switches below
+    # exit immediately, so matching one of them is a race, not a running tray.
+    #
+    # By FILENAME, not full path, unlike Get-SupervisorProcess. The tray's
+    # shortcut bakes in whatever path `install` ran from ($PSCommandPath) while
+    # this script computes its own from $PSScriptRoot -- run one via
+    # ~/.local/share and the other via ~/.dotfiles and they are the same file
+    # under two names, so a path match reports "not running" with an icon
+    # plainly in the tray. Same shape as the relocation that orphaned the
+    # supervisor: anything identifying itself by path has a migration step.
+    $leaf = Split-Path -Leaf $TrayScript
+    Get-CimInstance Win32_Process -Filter "Name='pwsh.exe' OR Name='powershell.exe'" -ErrorAction SilentlyContinue |
+        Where-Object {
+            $_.ProcessId -ne $PID -and $_.CommandLine -and
+            $_.CommandLine -like "*$leaf*" -and
+            $_.CommandLine -notmatch '-(Install|Uninstall|ShowLink)\b'
+        }
+}
+
+function Get-TrayLink {
+    # The tray script owns where its shortcut lives; ask it rather than keeping
+    # a second copy of the path here to drift out of step.
+    if (-not (Test-Path -LiteralPath $TrayScript)) { return $null }
+    try { & $TrayScript -ShowLink } catch { $null }
+}
+
+function Start-Tray {
+    # Launch through the shortcut itself rather than rebuilding its command
+    # line: one definition, and it exercises at install time the exact path
+    # logon will take -- which is the half that had never been tested.
+    $link = Get-TrayLink
+    if (-not $link -or -not (Test-Path -LiteralPath $link)) {
+        Write-Warning "no tray shortcut to launch"
+        return
+    }
+    $wsh = New-Object -ComObject WScript.Shell
+    $lnk = $wsh.CreateShortcut($link)
+    Start-Process -FilePath $lnk.TargetPath -ArgumentList $lnk.Arguments -WorkingDirectory $lnk.WorkingDirectory
+}
+
 function Get-PortOwner {
     $conn = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
     if (-not $conn) { return $null }
     Get-CimInstance Win32_Process -Filter "ProcessId=$($conn.OwningProcess)" -ErrorAction SilentlyContinue
+}
+
+function Get-PortServer {
+    # The PORT question, which is not the build question. `stop` and `start`
+    # care about what is holding port $Port and the VRAM behind it; whether
+    # that image is the same file this script would launch today is a
+    # REPORTING distinction, and it belongs in status where it already is.
+    #
+    # Identifying the thing to stop by exact path is how `stop` became a no-op
+    # that printed "not running" while /health answered ok: a mise shim
+    # appeared on PATH, $ServerExe moved to it, and the server started days
+    # earlier from ~\.cargo\bin stopped matching itself.
+    $owner = Get-PortOwner
+    if ($owner -and $owner.Name -eq 'omnivoice-server.exe') { return $owner }
+    return $null
+}
+
+function Wait-Stopped {
+    # Stop-Process -Force returns before the process is reaped, CUDA teardown
+    # adds a beat on top, and a listening socket lingers while it closes.
+    # Checking instantly reports a successful stop as a failure -- so the
+    # postcondition is a bounded wait, not a single look.
+    param([int]$TimeoutSeconds = 8)
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ($true) {
+        if (-not (Get-PortServer) -and -not (Get-ServerProcess) -and -not (Test-Health)) { return $true }
+        if ((Get-Date) -ge $deadline) { return $false }
+        Start-Sleep -Milliseconds 400
+    }
 }
 
 function Test-Health {
@@ -265,27 +348,63 @@ function Invoke-Install {
         -Settings $settings -Force `
         -Description "Supervises omnivoice-server for vox. Managed by scripts/omnivoice-service.ps1." | Out-Null
 
+    # The tray's own -Install owns the shortcut; this only calls it, so there is
+    # one definition of where it goes and what it runs.
+    if (Test-Path -LiteralPath $TrayScript) {
+        & $TrayScript -Install -Port $Port
+        $trays = @(Get-TrayProcess)
+        if ($trays.Count) { Say "tray is already running (pid $($trays[0].ProcessId))" }
+        else { Start-Tray; Say "tray started" }
+    }
+    else { Write-Warning "no tray script at $TrayScript; the tray was not installed" }
+
     Test-Shim
     Say "installed task '$TaskName' (starts at logon)"
     Say ("  binary : $ServerExe" + $(if ($installed) { " (installed)" } else { " (from the checkout at $RepoRoot)" }))
     Say "  voices : $VoicesFile"
     Say "  logs   : $LogFile"
+    Say "  launch : $(Join-Path $LogDir 'launcher.log') and tray.log record every autostart"
     Say "run 'omnivoice start' to start it now (from any directory)"
 }
 
 function Invoke-Uninstall {
-    Invoke-Stop
+    # Warn rather than abort: uninstall's job is to remove the machinery, and a
+    # server this script cannot reach is not a reason to leave the task and the
+    # tray shortcut behind.
+    if (-not (Invoke-Stop)) { Write-Warning "the server did not stop; removing the task anyway" }
     if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
         Say "removed task '$TaskName'"
     }
     else { Say "no task '$TaskName' registered" }
+
+    # Uninstall removes the tray; `stop` deliberately does not. Stopping the
+    # server to free the VRAM should leave its control surface in place --
+    # killing the tray is how you lose the button that starts it again.
+    if (Test-Path -LiteralPath $TrayScript) { & $TrayScript -Uninstall }
+    $trays = @(Get-TrayProcess)
+    foreach ($p in $trays) {
+        try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop } catch { }
+    }
+    if ($trays.Count) { Say "stopped $($trays.Count) tray process(es)" }
 }
 
 function Invoke-Start {
     $owner = Get-PortOwner
     if ($owner) {
-        if ($owner.ExecutablePath -eq $ServerExe) { Say "already running (pid $($owner.ProcessId))"; return }
+        if ($owner.Name -eq 'omnivoice-server.exe') {
+            # Same reasoning as Get-PortServer. Calling a server launched from
+            # another image path a squatter produced the unusable pair: start
+            # said "stop it first", stop said "not running".
+            $note = if ($owner.ExecutablePath -ne $ServerExe) { " from $($owner.ExecutablePath)" } else { "" }
+            Say "already running (pid $($owner.ProcessId))$note"
+            # It can be running with nothing watching it -- an orphan outlives
+            # the supervisor that started it. Say so; the fix is `restart`.
+            if (-not @(Get-SupervisorProcess).Count) {
+                Say "  no supervisor is watching it; run 'omnivoice restart' to put it back under one"
+            }
+            return
+        }
         Fail "port $Port is held by $($owner.Name) (pid $($owner.ProcessId)); stop it first"
     }
     if (-not (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue)) {
@@ -312,14 +431,32 @@ function Invoke-Stop {
     foreach ($p in $sups) {
         try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop } catch { }
     }
-    $procs = @(Get-ServerProcess)
-    foreach ($p in $procs) {
-        try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop } catch { }
+    # Then every server: this build by image path, plus whatever holds the
+    # port. A hashtable so the usual case -- both naming the same pid -- is
+    # counted once.
+    $targets = @{}
+    foreach ($p in @(Get-ServerProcess)) { $targets[[int]$p.ProcessId] = $true }
+    $held = Get-PortServer
+    if ($held) { $targets[[int]$held.ProcessId] = $true }
+    foreach ($id in @($targets.Keys)) {
+        # $id, NOT $pid: that is the automatic variable for this very process.
+        try { Stop-Process -Id $id -Force -ErrorAction Stop } catch { }
     }
-    if ($sups.Count -or $procs.Count) {
-        Say "stopped $($sups.Count) supervisor(s) and $($procs.Count) server process(es)"
+
+    # The postcondition. Without it "nothing matched" printed "not running",
+    # which was false whenever something was still serving -- and it read as
+    # success, so the tray's next green poll looked like the server restarting.
+    if (-not $sups.Count -and -not $targets.Count) {
+        if (-not (Get-PortServer) -and -not (Test-Health)) { Say "not running"; return $true }
+        Say "nothing matched, but port $Port still answers. Run 'omnivoice status'."
+        return $false
     }
-    else { Say "not running" }
+    if (Wait-Stopped) {
+        Say "stopped $($sups.Count) supervisor(s) and $($targets.Count) server process(es)"
+        return $true
+    }
+    Say "asked $($targets.Count) process(es) to stop, but port $Port still answers /health"
+    return $false
 }
 
 function Invoke-Status {
@@ -330,6 +467,30 @@ function Invoke-Status {
     Say ("supervisor: " + $(if ($sups.Count -eq 1) { "pid $($sups[0].ProcessId)" }
                             elseif ($sups.Count) { "$($sups.Count) RUNNING - they will race; run 'omnivoice restart'" }
                             else { "none (nothing will restart a crash)" }))
+
+    # The tray has its own autostart and can be absent while everything else is
+    # healthy, which is exactly the state that went unnoticed. Report both
+    # halves: whether one is running now, and whether one will start at logon.
+    $trays = @(Get-TrayProcess)
+    $link = Get-TrayLink
+    $linkState = if (-not $link) { "tray script missing" }
+                 elseif (Test-Path -LiteralPath $link) { "logon shortcut installed" }
+                 else { "NO logon shortcut - run 'omnivoice install'" }
+    # A shortcut pointing at a different copy of the script still works, but it
+    # means `install` was run from another path -- and after a move that other
+    # path may not exist by the next logon. Cheap to check, silent to hit.
+    if ($link -and (Test-Path -LiteralPath $link)) {
+        try {
+            $lnkArgs = (New-Object -ComObject WScript.Shell).CreateShortcut($link).Arguments
+            if ($lnkArgs -notlike "*$TrayScript*") {
+                $linkState += " but pointing at another copy, not $TrayScript - re-run 'omnivoice install'"
+            }
+        }
+        catch { }
+    }
+    Say ("tray     : " + $(if ($trays.Count -eq 1) { "pid $($trays[0].ProcessId)" }
+                            elseif ($trays.Count) { "$($trays.Count) running - you will see duplicate icons" }
+                            else { "not running" }) + "; $linkState")
 
     $proc = Get-ServerProcess | Select-Object -First 1
     if ($proc) {
@@ -369,7 +530,20 @@ function Invoke-Status {
 }
 
 function Invoke-Logs {
-    # Supervisor first: restarts are the thing you came to find out about, and
+    # Autostart first: "did the thing even start?" comes before "what did it do
+    # once it had", and nothing on the logon path has a console to say so.
+    $launcherLog = Join-Path $LogDir 'launcher.log'
+    $trayLog = Join-Path $LogDir 'tray.log'
+    foreach ($pair in @(@{ n = 'launcher (every autostart)'; p = $launcherLog },
+                        @{ n = 'tray'; p = $trayLog })) {
+        if (Test-Path -LiteralPath $pair.p) {
+            Write-Host "--- $($pair.n) ($($pair.p)) ---"
+            Get-Content -LiteralPath $pair.p -Tail $Tail
+            Write-Host ""
+        }
+    }
+
+    # Supervisor next: restarts are the thing you came to find out about, and
     # server.log only ever holds the CURRENT server's output.
     if (Test-Path -LiteralPath $SuperFile) {
         Write-Host "--- supervisor ($SuperFile) ---"
@@ -407,12 +581,12 @@ speech
   With no text and no -f, stdin is read when it is piped.
 
 service
-  status               task, supervisor, process, health, voices  (default)
-  start | stop         start it, or stop it to free the VRAM
+  status               task, supervisor, tray, process, health, voices  (default)
+  start | stop         start it, or stop it to free the VRAM (the tray stays)
   restart              stop, wait, start
-  logs [-Tail n]       supervisor history, then the current server's output
-  install              register the logon task that supervises the server
-  uninstall            stop everything and remove the task
+  logs [-Tail n]       autostart history, supervisor history, then the server
+  install              register the logon task and the tray, and start the tray
+  uninstall            stop everything and remove the task and the tray
   help                 this
 
 examples
@@ -680,8 +854,10 @@ switch ($Command) {
     'install' { Invoke-Install }
     'uninstall' { Invoke-Uninstall }
     'start' { Invoke-Start }
-    'stop' { Invoke-Stop }
-    'restart' { Invoke-Stop; Start-Sleep -Seconds 2; Invoke-Start }
+    # Exit non-zero on a failed stop: the tray runs this hidden, and an exit
+    # code is the only channel it has for learning the click did nothing.
+    'stop' { if (-not (Invoke-Stop)) { exit 1 } }
+    'restart' { if (-not (Invoke-Stop)) { exit 1 }; Start-Sleep -Seconds 2; Invoke-Start }
     'status' { Invoke-Status }
     'logs' { Invoke-Logs }
     'supervise' { Invoke-Supervise }

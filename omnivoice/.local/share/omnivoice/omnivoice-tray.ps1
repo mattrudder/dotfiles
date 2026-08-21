@@ -21,10 +21,43 @@ param(
     [int]$PollSeconds = 3,
     # Register a logon shortcut for the tray itself and exit.
     [switch]$Install,
-    [switch]$Uninstall
+    [switch]$Uninstall,
+    # Print the logon shortcut's path and exit. This script owns where that
+    # shortcut lives; omnivoice-service.ps1 asks rather than keeping a second
+    # copy of the path that could drift from this one.
+    [switch]$ShowLink
 )
 
 $ErrorActionPreference = 'Stop'
+
+# --- self-reporting ----------------------------------------------------------
+#
+# FIRST, before anything that can fail. This script normally runs under wscript
+# with no console and no redirection, so an error is invisible everywhere:
+# $ErrorActionPreference is 'Stop', which turns any failure into a terminating
+# one that kills the process without a trace. That is how a missing tray icon
+# became unanswerable after the fact. Everything below here can throw -- the
+# sibling-script check immediately does -- so the trap has to already exist.
+
+$TrayLog = Join-Path $env:LOCALAPPDATA 'omnivoice\tray.log'
+
+function Write-TrayLog {
+    param([string]$Message)
+    try {
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $TrayLog) | Out-Null
+        Add-Content -LiteralPath $TrayLog -Value "$(Get-Date -Format s) $Message"
+    }
+    catch { }   # never let logging be why the tray does not start
+}
+
+# A trap rather than wrapping the body: it catches terminating errors from any
+# scope below without re-indenting the script, and `break` rethrows so the exit
+# code is unchanged.
+trap {
+    Write-TrayLog "FAILED: $($_.Exception.GetType().Name): $($_.Exception.Message)"
+    Write-TrayLog "  at line $($_.InvocationInfo.ScriptLineNumber): $($_.InvocationInfo.Line.Trim())"
+    break
+}
 
 $ServiceScript = Join-Path $PSScriptRoot 'omnivoice-service.ps1'
 if (-not (Test-Path -LiteralPath $ServiceScript)) {
@@ -32,6 +65,8 @@ if (-not (Test-Path -LiteralPath $ServiceScript)) {
 }
 $LogFile = Join-Path $env:LOCALAPPDATA 'omnivoice\server.log'
 $StartupLink = Join-Path ([Environment]::GetFolderPath('Startup')) 'omnivoice-tray.lnk'
+
+if ($ShowLink) { $StartupLink; exit 0 }
 
 # --- install / uninstall the logon shortcut ----------------------------------
 
@@ -62,6 +97,8 @@ if ($Uninstall) {
     else { Write-Host "omnivoice: no tray shortcut installed" }
     exit 0
 }
+
+Write-TrayLog "starting (pid $PID, port $Port)"
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -113,10 +150,16 @@ function Invoke-Service {
     param([string]$Action)
     # Out-of-process: the service script writes the same logs the supervisor
     # uses, and running it inline would inherit this process's WinForms state.
-    Start-Process -FilePath (Get-Process -Id $PID).Path `
+    #
+    # -PassThru for the exit code. Hidden means the script's own stderr goes
+    # nowhere, so the code is the only thing that crosses back -- and without
+    # it a `stop` that stopped nothing was indistinguishable here from one
+    # that worked, which is how a no-op stop read as "it came right back".
+    $p = Start-Process -FilePath (Get-Process -Id $PID).Path `
         -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass',
                         '-File', $ServiceScript, $Action, '-Port', $Port) `
-        -WindowStyle Hidden -Wait
+        -WindowStyle Hidden -Wait -PassThru
+    return $p.ExitCode
 }
 
 # --- tray --------------------------------------------------------------------
@@ -125,6 +168,9 @@ $notify = New-Object System.Windows.Forms.NotifyIcon
 $notify.Icon = $Icons.down
 $notify.Text = 'omnivoice: checking...'
 $notify.Visible = $true
+# Logged separately from "starting": if the process gets here and no icon ever
+# appears, the fault is icon registration with the shell, not the launch.
+Write-TrayLog "icon shown"
 
 $menu = New-Object System.Windows.Forms.ContextMenuStrip
 $itemState = $menu.Items.Add('checking...')
@@ -171,8 +217,17 @@ function Run-Action {
     Set-Tip "omnivoice: $Pending"
     $itemState.Text = "$Pending..."
     [System.Windows.Forms.Application]::DoEvents()
-    try { Invoke-Service $Action } finally { $script:Busy = $false }
+    $code = 0
+    try { $code = Invoke-Service $Action } finally { $script:Busy = $false }
     Update-Ui
+    if ($code -ne 0) {
+        # Say it out loud. Repainting the state it already had is what made a
+        # failed stop look like a restart.
+        Write-TrayLog "$Action failed (exit $code)"
+        $notify.ShowBalloonTip(5000, 'omnivoice',
+            "$Action failed - run 'omnivoice status' to see what is holding the port",
+            [System.Windows.Forms.ToolTipIcon]::Error)
+    }
 }
 
 $itemStart.Add_Click({ Run-Action 'start' 'starting' })
@@ -203,4 +258,5 @@ finally {
     $notify.Dispose()
     $menu.Dispose()
     foreach ($i in $Icons.Values) { $i.Dispose() }
+    Write-TrayLog "exited (pid $PID)"
 }
